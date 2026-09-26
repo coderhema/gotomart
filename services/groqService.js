@@ -1,6 +1,9 @@
-const Groq = require('groq-sdk');
+const OpenAI = require('openai');
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const client = new OpenAI({
+  base_url: 'https://api.cerebras.ai/v1',
+  api_key: process.env.CEREBRAS_API_KEY
+});
 
 const INTENT_PROMPT = `You extract structured shopping intent from a buyer's WhatsApp message.
 Return ONLY valid JSON, no prose, no markdown fences, matching this exact shape:
@@ -24,8 +27,8 @@ Return ONLY valid JSON, no prose, no markdown fences, matching this exact shape:
 Never include any text outside the JSON object.`;
 
 async function callJson(systemPrompt, userText) {
-  const completion = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+  const completion = await client.chat.completions.create({
+    model: 'gpt-oss-120b',
     temperature: 0,
     response_format: { type: 'json_object' },
     messages: [
@@ -38,7 +41,7 @@ async function callJson(systemPrompt, userText) {
   try {
     return JSON.parse(raw);
   } catch (err) {
-    console.error('Groq returned unparseable JSON:', raw);
+    console.error('Cerebras returned unparseable JSON:', raw);
     return null;
   }
 }

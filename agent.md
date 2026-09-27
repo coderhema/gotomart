@@ -53,6 +53,14 @@ never left the chat.
 
 ## Scenario 2: A shop owner joining as a vendor
 
+### The Catalog Forwarding Strategy
+
+Since Meta's API does not allow programmatic scraping of another user's WhatsApp Business Catalog, GoToMart uses a native workaround: **instructing vendors to forward products directly from their catalog.**
+
+This action forces WhatsApp to deliver perfectly structured JSON containing the product details directly to the webhook, completely bypassing the need for AI plain-text parsing.
+
+### Vendor Onboarding Flow
+
 Mr. Bello runs a small provisions store. He hears about GoToMart and messages
 the same WhatsApp number:
 
@@ -71,13 +79,11 @@ different flow — and switches into onboarding mode:
 >
 > **Mr. Bello:** GTBank, 0123456789, Bello Provisions
 >
-> **GoToMart:** Got it. Now tell me about your shop — shop name, what you
-> sell, price, and location.
->
-> **Mr. Bello:** Bello Provisions, rice 50kg bag, 45000, Ikorodu
->
-> **GoToMart:** You're live on GoToMart! Buyers looking for rice in
-> Ikorodu can now find Bello Provisions.
+> **GoToMart:** Got it! Now here's the easy part — open your WhatsApp Business Catalog, tap on any product you want to sell, and use the **Forward** button to send it directly to this chat. We'll automatically add it to your store.
+
+Mr. Bello forwards the rice product from his catalog. GoToMart receives the structured JSON with all the product details and saves it.
+
+> **GoToMart:** You're live on GoToMart! Your product is now searchable by buyers nearby.
 
 That's it — Mr. Bello never downloaded anything, never filled out a form,
 never spoke to a human. He's now a searchable vendor, and the next time

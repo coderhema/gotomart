@@ -11,7 +11,41 @@ routes two different flows based on who's talking:
   details so they can arrange delivery, and gives the buyer a PIN to confirm
   handover.
 
-## 1. Setup
+## 1. Strategy: Forward Products Instead of Scraping
+
+Since Meta's API does not allow programmatic scraping of another user's WhatsApp Business Catalog, GoToMart uses a native workaround: **instructing vendors to forward products directly from their catalog.**
+
+This action forces WhatsApp to deliver perfectly structured JSON containing the product details directly to the webhook, completely bypassing the need for AI plain-text parsing.
+
+### Onboarding Prompt
+> *"Welcome to GoToMart! To add an item to your store, open your WhatsApp Business Catalog, tap on the product, and use the **Forward** button to send it directly to this chat."*
+
+### Webhook Implementation
+
+When a product is forwarded, the webhook receives an `interactive` message with type `product`. Add this logic to your POST `/webhook` route:
+
+```javascript
+// Inside your webhook POST handler
+const incomingMessage = req.body.entry[0].changes[0].value.messages[0];
+
+// 1. Catch forwarded catalog items
+if (incomingMessage.type === "interactive" && incomingMessage.interactive.type === "product") {
+    const productInfo = incomingMessage.interactive.product;
+    const vendorPhone = incomingMessage.from;
+    
+    console.log("Received Product JSON:", productInfo);
+    
+    // Extract product details (e.g., price, name, retailer_id)
+    // Map and save directly to the Airtable 'Vendors' table
+
+// 2. Fallback for casual text input
+} else if (incomingMessage.type === "text") {
+    // Process plain-text items using Cerebras AI
+    const plainText = incomingMessage.text.body;
+}
+```
+
+## 2. Setup
 
 ```bash
 npm install
@@ -19,7 +53,7 @@ cp .env.example .env   # fill in your real keys
 npm run dev             # runs on http://localhost:3000
 ```
 
-## 2. Airtable schema
+## 3. Airtable schema
 
 Three tables in one base.
 
@@ -60,7 +94,7 @@ routing against an empty table.
 | Pin | Single line text |
 | Status | Single line text (`pending` / `paid`) |
 
-## 3. Test locally without waiting on Meta
+## 4. Test locally without waiting on Meta
 
 **Buyer text in:**
 ```bash
@@ -99,7 +133,7 @@ While iterating, comment out the `axios.post` calls in `whatsappService.js`
 and `console.log` the payload instead — much faster than round-tripping
 through Meta every time.
 
-## 4. Deploy
+## 5. Deploy
 
 ```bash
 npm i -g vercel
@@ -115,7 +149,7 @@ vercel --prod
 - **Airtable**: Ensure Vendors, Sessions, Orders tables exist
 - **Cerebras**: Ensure CEREBRAS_API_KEY is set up
 
-## 5. Known MVP shortcuts (intentional)
+## 6. Known MVP shortcuts (intentional)
 
 - **Groups are out of scope for the demo.** WhatsApp's Cloud API groups
   support requires an Official Business Account, caps groups at 8
@@ -131,7 +165,7 @@ vercel --prod
   add more Nigerian bank codes for production.
 - **No GeoJSON.** Vendors matched by location name (`Ikorodu`) not coordinates.
 
-## 6. Step-by-Step TODO (Get Live)
+## 7. Step-by-step TODO (Get Live)
 
 ### Phase 1: Setup Accounts (≈ 2-3 days)
 

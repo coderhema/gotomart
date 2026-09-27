@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
 
-const { parseIntent, parseVendorCatalog } = require('./services/groqService');
+const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
 const { sendText, sendVendorList } = require('./services/whatsappService');
 const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
@@ -205,7 +205,26 @@ async function handleVendorSelection(from, reference) {
 
 // ---------------- Vendor onboarding flow ----------------
 
-async function startVendorOnboarding(session, from) {
+async function startVendorOnboarding(session, from, aiDecision = null) {
+  // If AI already parsed catalog data (item, price, location), skip straight to bank details
+  if (aiDecision?.item && aiDecision?.price) {
+    await setSession({ 
+      ...session, 
+      state: 'awaiting_bank',
+      data: { 
+        catalog: {
+          shopName: aiDecision.shopName || '',
+          item: aiDecision.item,
+          price: aiDecision.price,
+          location: aiDecision.location
+        }
+      }
+    });
+    await sendText(from, `Great! I see you want to sell ${aiDecision.item} for ₦${aiDecision.price} in ${aiDecision.location || 'your area'}. Where would you like to receive payments? Send your bank name, account number, and account name.`);
+    return;
+  }
+  
+  // Standard onboarding flow - ask for confirmation first
   await setSession({ ...session, state: 'awaiting_confirm', data: {} });
   await sendText(from, "Want to list your business on GoToMart? Reply YES to get started.");
 }
@@ -233,11 +252,20 @@ async function continueVendorOnboarding(session, text) {
 
   if (session.state === 'awaiting_catalog') {
     try {
-      // Use enhanced error handling wrapper for catalog parsing
-      const catalog = await withEnhancedErrorHandling(
-        () => parseVendorCatalog(text),
-        { from, text, stage: 'catalog_parsing' }
-      );
+      // Check if catalog was already parsed from AI in previous step
+      let catalog;
+      
+      if (session.data?.catalog) {
+        // Catalog was pre-parsed by AI in handleIncoming (e.g., "I want to sell rice for 45000")
+        catalog = session.data.catalog;
+        console.log('Using AI-pre-parsed catalog:', catalog);
+      } else {
+        // Parse from user's current message
+        catalog = await withEnhancedErrorHandling(
+          () => parseVendorCatalog(text),
+          { from, text, stage: 'catalog_parsing' }
+        );
+      }
       
       if (!catalog || !catalog.item) {
         await sendText(from, "I couldn't quite catch that — try again with shop name, item, price, and location.");

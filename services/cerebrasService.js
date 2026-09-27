@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Cerebras = require('@cerebras/cerebras_cloud_sdk');
 
 // Initialize Cerebras client
@@ -53,7 +54,7 @@ Never include any text outside the JSON object.`;
 async function callJson(systemPrompt, userText) {
   try {
     const response = await cerebras.chat.completions.create({
-      model: 'llama3.1-70b', // Standard Cerebras model
+      model: 'gpt-oss-120b', // Cerebras model
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userText }

@@ -11,6 +11,12 @@ const { generateVendorUid, createVendor } = require('./services/vendorService');
 const { createOrder, getOrderByReference, markOrderPaid } = require('./services/orderService');
 const { generatePin } = require('./utils/pin');
 const { isVendorIntent, hasBusinessProfileSignal } = require('./utils/classify');
+const {
+  logError,
+  categorizeError,
+  getUserFriendlyMessage,
+  withEnhancedErrorHandling
+} = require('./utils/errors');
 
 const app = express();
 
@@ -33,7 +39,20 @@ app.get('/webhook', (req, res) => {
 // --- Inbound WhatsApp messages ---
 app.post('/webhook', (req, res) => {
   res.sendStatus(200); // ack immediately, process async
-  handleIncoming(req.body).catch(err => console.error('handleIncoming error:', err));
+  
+  // Enhanced error handling for incoming messages
+  handleIncoming(req.body).catch(err => {
+    const errorType = categorizeError(err);
+    logError(err, {
+      body: req.body,
+      errorType,
+      stage: 'handleIncoming_outer',
+      timestamp: new Date().toISOString()
+    });
+    
+    // Note: No user message sent for top-level errors
+    // These are system errors that users shouldn't see
+  });
 });
 
 async function handleIncoming(body) {
@@ -67,14 +86,22 @@ async function handleIncoming(body) {
 
 async function handleTextQuery(from, text) {
   try {
-    const intent = await parseIntent(text);
+    // Use enhanced error handling wrapper for intent parsing
+    const intent = await withEnhancedErrorHandling(
+      () => parseIntent(text),
+      { from, text, stage: 'intent_parsing' }
+    );
 
     if (!intent || !intent.item) {
       await sendText(from, "Sorry, I couldn't understand that. Try something like: \"I need a 50kg bag of rice in Ikorodu\".");
       return;
     }
 
-    const vendors = await findVendors(intent);
+    // Use enhanced error handling wrapper for vendor search
+    const vendors = await withEnhancedErrorHandling(
+      () => findVendors(intent),
+      { from, intent, stage: 'vendor_search' }
+    );
 
     if (!vendors.length) {
       await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
@@ -84,47 +111,95 @@ async function handleTextQuery(from, text) {
     const vendorOrderPairs = [];
     for (const vendor of vendors) {
       const reference = crypto.randomUUID();
-      await createOrder({
-        Reference: reference,
-        BuyerPhone: from,
-        VendorId: vendor.id,
-        VendorPhone: vendor.phone,
-        Item: intent.item,
-        Quantity: intent.quantity,
-        Price: vendor.price,
-        Pin: generatePin(),
-        Status: 'pending'
-      });
+      
+      // Use enhanced error handling wrapper for order creation
+      await withEnhancedErrorHandling(
+        () => createOrder({
+          Reference: reference,
+          BuyerPhone: from,
+          VendorId: vendor.id,
+          VendorPhone: vendor.phone,
+          Item: intent.item,
+          Quantity: intent.quantity,
+          Price: vendor.price,
+          Pin: generatePin(),
+          Status: 'pending'
+        }),
+        { from, vendor, intent, stage: 'order_creation' }
+      );
       vendorOrderPairs.push({ vendor, reference });
     }
 
-    await sendVendorList(from, intent, vendorOrderPairs);
+    // Use enhanced error handling wrapper for vendor list sending
+    await withEnhancedErrorHandling(
+      () => sendVendorList(from, intent, vendorOrderPairs),
+      { from, vendorCount: vendors.length, stage: 'send_vendor_list' }
+    );
+    
   } catch (err) {
-    console.error('handleTextQuery error:', err?.response?.data || err);
-    await sendText(from, 'Something went wrong on our end. Please try again in a moment.');
+    // Enhanced error handling with categorization
+    const errorType = categorizeError(err);
+    const userMessage = getUserFriendlyMessage(errorType, err);
+    
+    // Log the error with structured data
+    logError(err, {
+      from,
+      text,
+      errorType,
+      stage: 'handleTextQuery',
+      timestamp: new Date().toISOString()
+    });
+    
+    await sendText(from, userMessage);
   }
 }
 
 async function handleVendorSelection(from, reference) {
   try {
-    const order = await getOrderByReference(reference);
+    // Use enhanced error handling wrapper for order retrieval
+    const order = await withEnhancedErrorHandling(
+      () => getOrderByReference(reference),
+      { from, reference, stage: 'order_retrieval' }
+    );
+    
     if (!order) {
       await sendText(from, 'That selection expired. Please resend your request.');
       return;
     }
 
-    const link = await createCheckoutLink(from, {
-      reference: order.Reference,
-      vendorUid: order.VendorId,
-      item: order.Item,
-      quantity: order.Quantity,
-      price: order.Price
-    });
+    // Use enhanced error handling wrapper for checkout link creation
+    const link = await withEnhancedErrorHandling(
+      () => createCheckoutLink(from, {
+        reference: order.Reference,
+        vendorUid: order.VendorId,
+        item: order.Item,
+        quantity: order.Quantity,
+        price: order.Price
+      }),
+      { from, order, stage: 'checkout_link_generation' }
+    );
 
-    await sendText(from, `Great choice. Complete your secure payment here: ${link}`);
+    // Use enhanced error handling wrapper for sending confirmation
+    await withEnhancedErrorHandling(
+      () => sendText(from, `Great choice. Complete your secure payment here: ${link}`),
+      { from, link, stage: 'send_confirmation' }
+    );
+    
   } catch (err) {
-    console.error('handleVendorSelection error:', err?.response?.data || err);
-    await sendText(from, 'Could not generate a payment link. Please try again.');
+    // Enhanced error handling with categorization
+    const errorType = categorizeError(err);
+    const userMessage = getUserFriendlyMessage(errorType, err);
+    
+    // Log the error with structured data
+    logError(err, {
+      from,
+      reference,
+      errorType,
+      stage: 'handleVendorSelection',
+      timestamp: new Date().toISOString()
+    });
+    
+    await sendText(from, userMessage);
   }
 }
 
@@ -158,30 +233,59 @@ async function continueVendorOnboarding(session, text) {
 
   if (session.state === 'awaiting_catalog') {
     try {
-      const catalog = await parseVendorCatalog(text);
+      // Use enhanced error handling wrapper for catalog parsing
+      const catalog = await withEnhancedErrorHandling(
+        () => parseVendorCatalog(text),
+        { from, text, stage: 'catalog_parsing' }
+      );
+      
       if (!catalog || !catalog.item) {
         await sendText(from, "I couldn't quite catch that — try again with shop name, item, price, and location.");
         return;
       }
 
       const uid = generateVendorUid(from);
-      await createVendor({
-        Name: catalog.shopName || 'Unnamed shop',
-        Item: catalog.item,
-        Location: catalog.location,
-        Price: catalog.price,
-        Rating: 0,
-        Verified: false,
-        Phone: from,
-        UID: uid,
-        BankDetails: session.data.bankDetails || ''
-      });
+      
+      // Use enhanced error handling wrapper for vendor creation
+      await withEnhancedErrorHandling(
+        () => createVendor({
+          Name: catalog.shopName || 'Unnamed shop',
+          Item: catalog.item,
+          Location: catalog.location,
+          Price: catalog.price,
+          Rating: 0,
+          Verified: false,
+          Phone: from,
+          UID: uid,
+          BankDetails: session.data.bankDetails || ''
+        }),
+        { from, catalog, stage: 'vendor_creation' }
+      );
 
       await clearSession(session);
-      await sendText(from, `You're live on GoToMart! Buyers looking for ${catalog.item}${catalog.location ? ` in ${catalog.location}` : ''} can now find ${catalog.shopName || 'your shop'}.`);
+      
+      // Use enhanced error handling wrapper for success message
+      await withEnhancedErrorHandling(
+        () => sendText(from, `You're live on GoToMart! Buyers looking for ${catalog.item}${catalog.location ? ` in ${catalog.location}` : ''} can now find ${catalog.shopName || 'your shop'}.`),
+        { from, catalog, stage: 'send_success_message' }
+      );
+      
     } catch (err) {
-      console.error('vendor onboarding catalog error:', err?.response?.data || err);
-      await sendText(from, 'Something went wrong saving your listing. Please try again.');
+      // Enhanced error handling with categorization
+      const errorType = categorizeError(err);
+      const userMessage = getUserFriendlyMessage(errorType, err);
+      
+      // Log the error with structured data
+      logError(err, {
+        from,
+        text,
+        sessionState: session.state,
+        errorType,
+        stage: 'continueVendorOnboarding',
+        timestamp: new Date().toISOString()
+      });
+      
+      await sendText(from, userMessage);
     }
     return;
   }
@@ -195,24 +299,72 @@ app.post('/paystack/webhook', (req, res) => {
   }
 
   res.sendStatus(200); // ack immediately, process async
-  handlePaystackEvent(req.body).catch(err => console.error('handlePaystackEvent error:', err));
+  
+  // Enhanced error handling for webhook processing
+  handlePaystackEvent(req.body).catch(err => {
+    const errorType = categorizeError(err);
+    logError(err, {
+      webhookEvent: req.body,
+      errorType,
+      stage: 'paystack_webhook',
+      timestamp: new Date().toISOString()
+    });
+    
+    // Note: No user message sent for webhook errors
+    // Webhook failures are logged but not sent to users
+  });
 });
 
 async function handlePaystackEvent(event) {
-  if (event.event !== 'charge.success') return;
+  try {
+    if (event.event !== 'charge.success') return;
 
-  const reference = event.data?.reference;
-  const order = await getOrderByReference(reference);
-  if (!order || order.Status === 'paid') return;
+    const reference = event.data?.reference;
+    
+    // Use enhanced error handling wrapper for order retrieval
+    const order = await withEnhancedErrorHandling(
+      () => getOrderByReference(reference),
+      { reference, event, stage: 'order_retrieval_payment' }
+    );
+    
+    if (!order || order.Status === 'paid') return;
 
-  await markOrderPaid(order.id);
+    // Use enhanced error handling wrapper for marking order as paid
+    await withEnhancedErrorHandling(
+      () => markOrderPaid(order.id),
+      { order, stage: 'mark_order_paid' }
+    );
 
-  await sendText(order.BuyerPhone, `Payment confirmed! Your PIN is ${order.Pin}. Show this to the vendor to confirm handover.`);
+    // Use enhanced error handling wrapper for buyer notification
+    await withEnhancedErrorHandling(
+      () => sendText(order.BuyerPhone, `Payment confirmed! Your PIN is ${order.Pin}. Show this to the vendor to confirm handover.`),
+      { order, stage: 'notify_buyer_payment' }
+    );
 
-  await sendText(
-    order.VendorPhone,
-    `You've received ₦${Number(order.Price).toLocaleString()} for ${order.Quantity ? order.Quantity + ' ' : ''}${order.Item}. Contact the buyer at ${order.BuyerPhone} to arrange delivery — they'll confirm with PIN ${order.Pin}.`
-  );
+    // Use enhanced error handling wrapper for vendor notification
+    await withEnhancedErrorHandling(
+      () => sendText(
+        order.VendorPhone,
+        `You've received ₦${Number(order.Price).toLocaleString()} for ${order.Quantity ? order.Quantity + ' ' : ''}${order.Item}. Contact the buyer at ${order.BuyerPhone} to arrange delivery — they'll confirm with PIN ${order.Pin}.`
+      ),
+      { order, stage: 'notify_vendor_payment' }
+    );
+    
+  } catch (err) {
+    // Enhanced error handling with categorization
+    const errorType = categorizeError(err);
+    
+    // Log the error with structured data
+    logError(err, {
+      event,
+      errorType,
+      stage: 'handlePaystackEvent',
+      timestamp: new Date().toISOString()
+    });
+    
+    // Re-throw to be caught by the outer handler
+    throw err;
+  }
 }
 
 const PORT = process.env.PORT || 3000;

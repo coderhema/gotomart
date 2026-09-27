@@ -50,7 +50,7 @@ routing against an empty table.
 **Orders**
 | Field | Type |
 |---|---|
-| Reference | Single line text (also used as the Paystack reference) |
+| Reference | Single line text (also used as the Bachs checkout reference) |
 | BuyerPhone | Single line text |
 | VendorId | Single line text |
 | VendorPhone | Single line text |
@@ -84,16 +84,16 @@ curl -X POST http://localhost:3000/webhook -H "Content-Type: application/json" \
   -d '{"entry":[{"changes":[{"value":{"messages":[{"from":"2348000000000","type":"interactive","interactive":{"type":"list_reply","list_reply":{"id":"PASTE_REFERENCE_HERE"}}}]}}]}]}'
 ```
 
-**Simulate a Paystack payment webhook:**
+**Simulate a Bachs payment webhook** (collection.succeeded):
 ```bash
-curl -X POST http://localhost:3000/paystack/webhook -H "Content-Type: application/json" \
-  -H "x-paystack-signature: (you'll need a real one — test this against Paystack's own test dashboard instead)" \
-  -d '{"event":"charge.success","data":{"reference":"PASTE_REFERENCE_HERE"}}'
+curl -X POST http://localhost:3000/bachs-webhook -H "Content-Type: application/json" \
+  -H "x-bachs-signature: (use BACHS_WEBHOOK_SECRET from .env to generate)" \
+  -d '{"type":"collection.succeeded","data":{"checkout_session_id":"chk_...","reference":"PASTE_REFERENCE_HERE","amount":"45000.00","currency":"NGN"}}'
 ```
 Signature verification means you can't easily fake this one locally — the
-fastest way to test the payment confirmation branch is a real test transaction
-against Paystack's sandbox, with your Vercel URL + `/paystack/webhook`
-registered as the webhook in your Paystack dashboard.
+fastest way to test the payment confirmation branch is to use Bachs sandbox
+and their test webhooks, with your Vercel URL + `/bachs-webhook`
+registered as the webhook in your Bachs dashboard.
 
 While iterating, comment out the `axios.post` calls in `whatsappService.js`
 and `console.log` the payload instead — much faster than round-tripping
@@ -106,38 +106,83 @@ npm i -g vercel
 vercel --prod
 ```
 
-- Meta App Dashboard → WhatsApp → Configuration: set webhook URL to
+- **Meta App Dashboard** → WhatsApp → Configuration: set webhook URL to
   `https://your-app.vercel.app/webhook`, same verify token as `.env`. Add
   your phone number as a test recipient.
-- Paystack Dashboard → Settings → API Keys & Webhooks: set webhook URL to
-  `https://your-app.vercel.app/paystack/webhook`.
+- **Bachs Dashboard** → Webhooks: set webhook URL to
+  `https://your-app.vercel.app/bachs-webhook`, use the BACHS_WEBHOOK_SECRET
+  from your `.env`.
+- **Airtable**: Ensure Vendors, Sessions, Orders tables exist
+- **Cerebras**: Ensure CEREBRAS_API_KEY is set up
 
-## 5. Known MVP shortcuts / open questions (intentional)
+## 5. Known MVP shortcuts (intentional)
 
 - **Groups are out of scope for the demo.** WhatsApp's Cloud API groups
   support requires an Official Business Account, caps groups at 8
   participants, and has no endpoint to add the bot to a group (invite-link
   only). Unless you already have OBA status, build and demo the DM flow only.
-- **Meta vs Twilio isn't resolved.** This is built against the Meta Cloud
-  API directly. If you're actually using Twilio's WhatsApp Sandbox (as the
-  architecture diagram suggests, to skip Meta approval), the webhook payload
-  shape and `whatsappService.js` need to be rewritten for Twilio's format.
 - **Vendor detection is keyword-based**, with a best-effort check for any
   business-profile-shaped field Meta happens to send (`utils/classify.js`).
   There's no reliable "this sender is a WhatsApp Business account" flag in
   the Cloud API webhook.
-- **No real payout automation.** Vendor bank details are collected and
-  stored, but GoToMart only *notifies* the vendor of payment and buyer
-  contact info — it doesn't move money to their bank account. Real payouts
-  (e.g. Paystack Transfers/subaccounts) are a clear next step, not required
-  for the demo.
+- **Bachs payout requires vendor verification.** Bachs may require KYC for
+  payout destinations. For MVP, test with verified accounts only.
+- **Bank code mapping limited.** The app has a small bank code mapping;
+  add more Nigerian bank codes for production.
+- **No GeoJSON.** Vendors matched by location name (`Ikorodu`) not coordinates.
 
-## 6. Suggested remaining build order
+## 6. Step-by-Step TODO (Get Live)
 
-1. Airtable: create the 3 tables above, seed vendors.
-2. Buyer flow end-to-end locally (curl → console.log instead of real sends).
-3. Vendor onboarding flow end-to-end locally.
-4. Deploy to Vercel, wire the real Meta webhook, first real WhatsApp message.
-5. Wire Paystack (checkout + webhook), test one real payment end-to-end.
-6. Error handling pass + a couple of realistic demo run-throughs.
-7. Record a demo video as a backup in case live WhatsApp flakes during judging.
+### Phase 1: Setup Accounts (≈ 2-3 days)
+
+- [ ] **Sign up for Cerebras** (https://cloud.cerebras.ai) → Get API key
+- [ ] **Sign up for Bachs** (https://bachs.io) → Get sandbox API key + webhook secret
+- [ ] **Create product in Bachs dashboard**: `prod_gotomart_default` (price: `0` for dynamic pricing)
+- [ ] **Create Meta WhatsApp app** (https://developers.facebook.com) → Get META tokens 
+- [ ] **Sign up for Airtable** → Create base with Vendors, Sessions, Orders tables
+
+### Phase 2: Local Testing (≈ 1 day)
+
+- [ ] **Setup `.env`**
+  ```
+  CEREBRAS_API_KEY=your_key
+  BACHS_API_KEY=sk_sandbox_...
+  BACHS_WEBHOOK_SECRET=...
+  META_PHONE_NUMBER_ID=...
+  META_ACCESS_TOKEN=...
+  META_VERIFY_TOKEN=...
+  AIRTABLE_*=...
+  ```
+- [ ] **Seed Airtable** with 5-8 test vendors
+- [ ] **Test buyer flow**: `curl -X POST http://localhost:3000/webhook ...` (see Section 3)
+- [ ] **Test vendor onboarding**: `curl -X POST http://localhost:3000/webhook ...`
+- [ ] **Test checkout flow**: Vendor picks vendor → get Bachs checkout link
+
+### Phase 3: Deploy & Go Live (≈ 1 day)
+
+- [ ] **Deploy to Vercel**: `npm i -g vercel && vercel --prod`
+- [ ] **Configure Meta webhook**: Add Vercel URL to WhatsApp config
+- [ ] **Configure Bachs webhook**: Add `https://your-app.vercel.app/bachs-webhook` as webhook
+- [ ] **Test end-to-end on WhatsApp**: Real messages, real Bachs sandbox payments
+- [ ] **Verify vendor payout flow**: Money → vendor bank account via Bachs transfers
+
+### Phase 4: Production Polish
+
+- [ ] **Switch Bachs to live keys** (after testing in sandbox)
+- [ ] **Add more Nigerian bank codes** in `paystackService.js`
+- [ ] **Implement retry logic** for failed Bachs payouts
+- [ ] **Add error tracking** (Sentry/Logflare)
+- [ ] **Add analytics** (how many buyers/vendors, conversion rate)
+
+**Timeline**: 4-5 days total to MVP → Live
+
+### Tech Stack
+
+| Component | Technology | Purpose |
+|---|---|---|
+| **AI Parsing** | Cerebras (`gpt-oss-120b`) | Parse buyer text, vendor catalogs |
+| **Payments** | Bachs | Marketplace checkout + vendor payouts |
+| **Database** | Airtable | Vendors, Sessions, Orders |
+| **Messaging** | Meta WhatsApp Cloud API | Buyer/Vendor chat interface |
+| **Backend** | Node/Express | Webhook handling, business logic |
+| **Hosting** | Vercel | Serverless deployment |

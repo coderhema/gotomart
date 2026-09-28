@@ -34,4 +34,12 @@ async function markOrderPaid(recordId) {
   await axios.patch(`${baseUrl()}/${recordId}`, { fields: { Status: 'paid' } }, { headers: headers() });
 }
 
-module.exports = { createOrder, getOrderByReference, markOrderPaid };
+async function getOrdersByPhone(phone) {
+  const { data } = await axios.get(baseUrl(), {
+    headers: headers(),
+    params: { filterByFormula: `{BuyerPhone} = "${phone}"`, sort: [{ field: 'CreatedTime', direction: 'desc' }], maxRecords: 10 }
+  });
+  return data.records.map(record => ({ id: record.id, ...record.fields }));
+}
+
+module.exports = { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone };

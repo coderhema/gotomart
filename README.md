@@ -1,4 +1,132 @@
-# GoToMart — MVP Backend
+# GoToMart
+
+A WhatsApp-native AI marketplace connecting buyers with local vendors.
+
+## Project Structure
+
+```
+gotomart/
+├── src/                          # Backend API source code
+│   ├── index.js                  # Main Express server & webhooks
+│   ├── services/                 # Business logic services
+│   │   ├── airtableService.js    # Database operations
+│   │   ├── cerebrasService.js    # AI/LLM integration
+│   │   ├── orderService.js       # Order management
+│   │   ├── paystackService.js    # Payment processing
+│   │   ├── sessionService.js     # User session state
+│   │   ├── vendorService.js      # Vendor onboarding
+│   │   ├── whatsappService.js    # Meta WhatsApp API
+│   │   └── ...
+│   └── utils/                    # Utility functions
+│       ├── classify.js           # Intent classification
+│       ├── errors.js             # Error handling
+│       └── pin.js                # PIN generation
+│
+├── tests/                        # Test files
+│   ├── test_integration.js
+│   ├── test_webhook.js
+│   └── ...
+│
+├── landing/                      # React + Vite + Tailwind landing page
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── src/
+│       ├── main.jsx              # Entry point
+│       ├── App.jsx               # Main app component
+│       ├── index.css             # Global styles + Tailwind
+│       └── components/           # React components
+│           ├── Navigation.jsx
+│           ├── Hero.jsx
+│           ├── ChatDemo.jsx
+│           ├── Features.jsx
+│           ├── HowItWorks.jsx
+│           ├── ForVendors.jsx
+│           ├── ForBuyers.jsx
+│           └── Footer.jsx
+│
+├── package.json                  # Root package.json
+├── .env                          # Environment variables
+├── .env.example                  # Environment template
+└── README.md
+```
+
+## Quick Start
+
+### Backend API
+
+```bash
+# Install dependencies
+npm install
+
+# Run in development mode (with auto-reload)
+npm run dev
+
+# Run in production mode
+npm start
+```
+
+### Landing Page
+
+```bash
+# Install landing page dependencies
+npm run postinstall
+
+# Start Vite dev server
+npm run dev:landing
+
+# Build for production
+npm run build:landing
+
+# Preview production build
+npm run preview:landing
+```
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Run backend API in watch mode |
+| `npm run start` | Run backend API in production mode |
+| `npm run dev:landing` | Start landing page dev server (port 5173) |
+| `npm run build:landing` | Build landing page for production |
+| `npm run preview:landing` | Preview landing page production build |
+| `npm run test` | Run integration tests |
+
+## Tech Stack
+
+### Backend
+- **Runtime:** Node.js 18+
+- **Framework:** Express.js
+- **AI/ML:** Cerebras Cloud SDK
+- **Database:** Airtable
+- **Payments:** Bachs (formerly Paystack)
+- **Messaging:** Meta WhatsApp Cloud API
+
+### Landing Page
+- **Framework:** React 18
+- **Build Tool:** Vite 5
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+
+## Environment Setup
+
+Copy `.env.example` to `.env` and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+Required keys:
+- `META_PHONE_NUMBER_ID` - WhatsApp Business account ID
+- `META_ACCESS_TOKEN` - Meta API token
+- `META_VERIFY_TOKEN` - Webhook verification token
+- `CEREBRAS_API_KEY` - Cerebras inference API key
+- `AIRTABLE_BASE_ID` - Airtable base ID
+- `BACHS_API_KEY` - Payment provider API key
+
+## Original
 
 A WhatsApp-native AI agent, not a browsable marketplace. One WhatsApp number
 routes two different flows based on who's talking:

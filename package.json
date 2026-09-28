@@ -1,17 +1,32 @@
 {
-  "name": "gotomart-backend",
+  "name": "gotomart",
   "version": "0.1.0",
-  "description": "WhatsApp-native AI marketplace backend (MVP)",
-  "main": "index.js",
+  "description": "WhatsApp-native AI marketplace - Backend API & Landing Page",
+  "private": true,
+  "workspaces": [
+    "landing"
+  ],
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js"
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "dev:landing": "cd landing && npm run dev",
+    "build:landing": "cd landing && npm install && npm run build",
+    "preview:landing": "cd landing && npm run preview",
+    "test": "node tests/test_integration.js",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.91.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "openai": "^4.77.0"
+    "openai": "^4.77.0",
+    "twilio": "^6.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

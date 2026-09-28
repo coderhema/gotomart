@@ -1,14 +1,15 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const express = require('express');
 const crypto = require('crypto');
+const path = require('path');
 
 const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
-const { sendText, sendVendorList } = require('./services/whatsappService');
+const { sendText, sendVendorList, parseTwilioMessage, handleWebhookVerify } = require('./services/twilioService');
 const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
-const { createOrder, getOrderByReference, markOrderPaid } = require('./services/orderService');
+const { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone } = require('./services/orderService');
 const { generatePin } = require('./utils/pin');
 const { isVendorIntent, hasBusinessProfileSignal } = require('./utils/classify');
 const {
@@ -24,17 +25,8 @@ const app = express();
 // the exact raw bytes, not the re-serialized JSON.
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
-// --- Meta webhook verification ---
-app.get('/webhook', (req, res) => {
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
-
-  if (mode === 'subscribe' && token === process.env.META_VERIFY_TOKEN) {
-    return res.status(200).send(challenge);
-  }
-  return res.sendStatus(403);
-});
+// --- Twilio/Meta webhook verification ---
+app.get('/webhook', handleWebhookVerify);
 
 // --- Inbound WhatsApp messages ---
 app.post('/webhook', (req, res) => {
@@ -56,6 +48,13 @@ app.post('/webhook', (req, res) => {
 });
 
 async function handleIncoming(body) {
+  // Check if Twilio format (has Body and From)
+  if (body?.Body && body?.From) {
+    const parsed = parseTwilioMessage(body);
+    return handleTextMessage(parsed.from, parsed.text);
+  }
+
+  // Meta/WhatsApp format
   const value = body?.entry?.[0]?.changes?.[0]?.value;
   const message = value?.messages?.[0];
   if (!message) return;
@@ -69,14 +68,32 @@ async function handleIncoming(body) {
   if (message.type !== 'text') return;
 
   const text = message.text.body;
+  return handleTextMessage(from, text);
+}
+
+async function handleTextMessage(from, text) {
   const session = await getSession(from);
+  const isVendor = isVendorIntent(text) || text.toLowerCase().includes('sell') || text.toLowerCase().includes('vendor');
 
   if (session.state !== 'idle') {
     return continueVendorOnboarding(session, text);
   }
 
-  if (isVendorIntent(text) || hasBusinessProfileSignal(value)) {
+  if (isVendor) {
     return startVendorOnboarding(session, from);
+  }
+
+  // Handle numbered vendor selection for Twilio
+  if (/^[1-9]\d*$/.test(text.trim())) {
+    try {
+      const recentOrders = await getOrdersByPhone(from);
+      const index = parseInt(text.trim()) - 1;
+      if (recentOrders[index]) {
+        return handleVendorSelection(from, recentOrders[index].Reference);
+      }
+    } catch (e) {
+      console.error('Error fetching recent orders:', e);
+    }
   }
 
   return handleTextQuery(from, text);

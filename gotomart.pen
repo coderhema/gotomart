@@ -1,0 +1,3432 @@
+{
+  "version": "2.18",
+  "children": [
+    {
+      "type": "frame",
+      "id": "yk7It",
+      "x": 80,
+      "y": 80,
+      "name": "GotoMart Landing Page",
+      "width": 1440,
+      "fill": "$canvas-cream",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "JWqE6",
+          "name": "Announcement Banner",
+          "width": "fill_container",
+          "height": 48,
+          "fill": "$linen",
+          "padding": [
+            12,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "m4iYg",
+              "name": "Banner Text",
+              "fill": "$graphite",
+              "content": "GotoMart is now live in Lagos! Connect with trusted vendors on WhatsApp",
+              "fontFamily": "$font-saans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QVfe9",
+          "name": "Navigation",
+          "width": "fill_container",
+          "fill": "$canvas-cream",
+          "padding": [
+            20,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uOmea",
+              "name": "Frame 1",
+              "width": 149,
+              "gap": 170,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "R8OjCI",
+                  "name": "Frame 2",
+                  "clip": true,
+                  "width": 35,
+                  "height": 35,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "jY45Z",
+                      "x": 0,
+                      "y": 0,
+                      "geometry": "M16.73572 0l1.54665 0c0.1656 0.03999 0.38999 0.04312 0.56482 0.05563 0.21397 0.01678 0.42759 0.0375 0.64087 0.06214 0.71145 0.08648 1.41778 0.21085 2.11607 0.37258 4.14565 0.99776 7.78237 3.47962 10.22246 6.97651l-2.79744 1.95882c-0.39717 0.27749-0.86235 0.58476-1.24141 0.8702-0.6096-0.82679-1.14382-1.45983-1.91457-2.15896-1.8158-1.61979-4.0614-2.67952-6.46612-3.05129-3.30466-0.50704-6.67526 0.32264-9.36704 2.30571-2.68907 1.98206-4.47668 4.95467-4.96675 8.25913-0.48216 3.25944 0.33371 6.57795 2.27225 9.24208 1.9592 2.68806 4.90586 4.48762 8.19186 5.00323 0.56325 0.0834 1.25648 0.15432 1.83223 0.1615 2.74001 0.01931 5.41201-0.8521 7.61387-2.48316 1.83767-1.36736 3.12778-3.06301 4.05935-5.13943l-4.41533-0.00085c-2.16768 0.00017-3.98432 0.15706-5.9312-1.02745-0.56619-0.34453-1.02248-0.6677-1.49553-1.14553-1.19357-1.19646-1.9434-2.76428-2.12557-4.44453-0.05433-0.49231-0.04895-1.06417-0.04652-1.55992-1.26957-0.0269-2.55131 0.01357-3.82103-0.01317-0.19274-0.00405-0.32179-0.15682-0.32497-0.34141-0.00279-0.08577 0.04956-0.17037 0.0969-0.2379 0.4307-0.5646 0.87343-1.12834 1.30962-1.68855l2.53664-3.26014 1.60544-2.06339c0.28369-0.36459 0.56925-0.75441 0.87937-1.09704 0.04221-0.0466 0.13125-0.05547 0.19073-0.05381 0.15637 0.01201 0.23311 0.09174 0.32402 0.20865 0.40024 0.51406 0.79997 1.03076 1.20022 1.54477l2.58091 3.31684 1.72539 2.21763c0.2167 0.28154 0.43784 0.56516 0.66001 0.84493 0.1926 0.24235 0.12031 0.59225-0.21465 0.6088-0.40794 0.02017-0.83928 0.00899-1.2532 0.00881l-2.55818 0.00152c-0.01624 0.95266-0.04649 1.70777 0.66805 2.45991 0.52107 0.5484 1.11289 0.7745 1.85852 0.775 1.01531 0.00069 2.03557 0.00017 3.05258-0.00016l5.84405 0.00051 2.40556-0.00103c0.27481-0.00017 0.96712-0.01692 1.20535 0.01128l0 0.35154c-0.05759 0.34128-0.03982 0.7834-0.0752 1.13784-0.06255 0.62685-0.13535 1.23884-0.25873 1.85733-0.83843 4.28169-3.24434 8.09648-6.7469 10.69807-2.6855 1.97883-5.77347 3.14932-9.08548 3.39011-0.23841 0.01743-0.52893 0.02153-0.76033 0.06665l-1.00854 0c-0.19915-0.04033-0.62563-0.04204-0.84658-0.05622-0.47782-0.03281-0.95395-0.08648-1.42708-0.16082-2.72556-0.43101-5.31166-1.49656-7.54966-3.11069-3.49744-2.52827-5.93537-6.26138-6.84395-10.48018-0.1325-0.60789-0.23087-1.22261-0.29466-1.8416-0.02912-0.30796-0.0545-0.91875-0.09989-1.18586l-0.003-0.01658 0-1.46161c0.04811-0.21764 0.063-0.65743 0.08629-0.90019 0.04608-0.46898 0.11103-0.93591 0.19469-1.39966 0.46804-2.57677 1.50557-5.01654 3.03684-7.14116 2.452-3.39385 6.04123-5.79432 10.11425-6.76439 0.73857-0.17218 1.48682-0.29985 2.2407-0.38232 0.32674-0.03768 0.731-0.04353 1.04205-0.09508l0.0209-0.00364z",
+                      "fill": "#0007ccff",
+                      "width": 35,
+                      "height": 35
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "M3IMu",
+                  "name": "Logo",
+                  "clip": true,
+                  "width": 104,
+                  "height": 29,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p1Xv2",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Logo Text",
+                      "fill": "$ink",
+                      "content": "GotoMart",
+                      "fontFamily": "$font-saans",
+                      "fontSize": 24,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "group",
+                      "id": "UqbW1",
+                      "x": -431,
+                      "y": -252,
+                      "name": "GotoMart G Logo",
+                      "children": [
+                        {
+                          "type": "path",
+                          "id": "A5JFW",
+                          "x": 0,
+                          "y": 0,
+                          "geometry": "M312.08926 73.21848c-48.52942-69.37183-140.41604-92.95804-216.35805-55.53659-75.94202 37.42146-113.22046 124.65548-87.77657 205.40304 25.44389 80.74753 105.99823 130.85193 189.67491 117.9769 83.67669-12.87509 145.44281-84.8779 145.43573-169.53934",
+                          "width": 343.0652847290039,
+                          "height": 343.07186126708984,
+                          "stroke": "#000",
+                          "strokeWidth": 56.32
+                        },
+                        {
+                          "type": "path",
+                          "id": "cMO4G",
+                          "x": 171.54529571533203,
+                          "y": 120.32247161865234,
+                          "geometry": "M148.47998 79.36002l-92.15997 0c-31.10468 0-56.32001-25.21533-56.32001-56.32001l0-23.04001",
+                          "width": 148.47998046875,
+                          "height": 79.36001586914062,
+                          "stroke": "#000",
+                          "strokeWidth": 56.32
+                        },
+                        {
+                          "type": "path",
+                          "id": "Y31x3",
+                          "x": 99.86528778076172,
+                          "y": 38.40248107910156,
+                          "geometry": "M71.68001 0l71.67999 92.16-143.36 0 71.68001-92.16z",
+                          "fill": "#000000",
+                          "width": 143.36000061035156,
+                          "height": 92.15999603271484,
+                          "stroke": "#000",
+                          "strokeWidth": 7.68,
+                          "strokeLinejoin": "round"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "K2Mh5P",
+              "name": "Nav Links",
+              "gap": 32,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "No4cC",
+                  "name": "How it works",
+                  "fill": "$graphite",
+                  "content": "How it works",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "WWbGC",
+                  "name": "For Vendors",
+                  "fill": "$graphite",
+                  "content": "For Vendors",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "eYqtS",
+                  "name": "For Buyers",
+                  "fill": "$graphite",
+                  "content": "For Buyers",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Wk1pV",
+                  "name": "Pricing",
+                  "fill": "$graphite",
+                  "content": "Pricing",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nwDrf",
+              "name": "Nav Buttons",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OgFsI",
+                  "name": "Contact Sales",
+                  "fill": "$ink",
+                  "content": "Contact us",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "z5TMQF",
+                  "name": "Start Button",
+                  "fill": "$carbon",
+                  "cornerRadius": 4,
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "eTwqO",
+                      "name": "Start Label",
+                      "fill": "$pure-white",
+                      "content": "Start Chatting",
+                      "fontFamily": "$font-saans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fdIjA",
+          "name": "Hero Section",
+          "metadata": {
+            "type": "unsplash",
+            "username": "1hundredimages",
+            "link": "https://unsplash.com/@1hundredimages",
+            "author": "Ben Iwara"
+          },
+          "width": "fill_container",
+          "height": 669,
+          "fill": "#faf9f6",
+          "gap": 64,
+          "padding": [
+            96,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "gvBVr",
+              "name": "Hero Text",
+              "width": 600,
+              "height": 400,
+              "fill": "#faf9f6",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "e3yWwd",
+                  "name": "Hero Headline",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Your WhatsApp marketplace for buying & selling",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 80,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "MiDl1",
+                  "name": "Hero Subtext",
+                  "fill": "$graphite",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "GotoMart connects vendors with ready buyers on WhatsApp. No app downloads, no complicated setup - just chat, browse, and buy.",
+                  "fontFamily": "$font-saans",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "CUNGV",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": 16
+                },
+                {
+                  "type": "frame",
+                  "id": "RjZVJ",
+                  "name": "Hero Buttons",
+                  "gap": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P7PvEi",
+                      "name": "Primary CTA",
+                      "fill": "$carbon",
+                      "cornerRadius": 4,
+                      "gap": 8,
+                      "padding": [
+                        16,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "TzqoP",
+                          "name": "Primary Label",
+                          "fill": "$pure-white",
+                          "content": "Start selling on WhatsApp",
+                          "fontFamily": "$font-saans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "iupJR",
+                      "name": "Secondary CTA",
+                      "fill": "$ink",
+                      "content": "Learn more →",
+                      "fontFamily": "$font-saans",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DR4nE",
+              "name": "Hero Visual",
+              "width": 520,
+              "height": 530,
+              "fill": "#f1eee9",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "padding": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aTr3K",
+                  "name": "Chat Header",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VDAwg",
+                      "name": "WhatsApp Icon",
+                      "width": 32,
+                      "height": 32,
+                      "fill": "$electric-violet",
+                      "cornerRadius": 4
+                    },
+                    {
+                      "type": "text",
+                      "id": "X1uO6n",
+                      "name": "Chat Title",
+                      "fill": "$ink",
+                      "content": "Ata la n ta",
+                      "fontFamily": "$font-saans",
+                      "fontSize": 14,
+                      "fontWeight": "600",
+                      "fontStyle": "italic"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yIoR1",
+                  "name": "Header Spacer",
+                  "width": "fill_container",
+                  "height": 16
+                },
+                {
+                  "type": "frame",
+                  "id": "R55fLA",
+                  "name": "Divider",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "$hairline"
+                },
+                {
+                  "type": "frame",
+                  "id": "QvgjX",
+                  "name": "Divider Spacer",
+                  "width": "fill_container",
+                  "height": 16
+                },
+                {
+                  "type": "frame",
+                  "id": "A8KpRo",
+                  "name": "Message 1",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "SFoc9",
+                      "name": "Chat Bubble",
+                      "fill": "$pure-white",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cNKen",
+                          "name": "Message Text",
+                          "fill": "$ink",
+                          "content": "Hi! I sell fresh organic tomatoes. Interested? 🍅",
+                          "fontFamily": "$font-saans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q4VYU",
+                  "name": "Spacer 4",
+                  "width": "fill_container",
+                  "height": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "KEX9T",
+                  "name": "Message 2",
+                  "width": "fill_container",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Z5aG3",
+                      "name": "Chat Bubble",
+                      "fill": "$electric-violet",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Z4CLwm",
+                          "name": "Message Text",
+                          "fill": "$pure-white",
+                          "content": "Yes! How much per kg?",
+                          "fontFamily": "$font-saans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "v5Lwv9",
+                  "name": "Spacer 5",
+                  "width": "fill_container",
+                  "height": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "NNa3u",
+                  "name": "Message 3",
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i7XyD8",
+                      "name": "Chat Bubble",
+                      "fill": "$pure-white",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ld88g",
+                          "name": "Message Text",
+                          "fill": "$ink",
+                          "content": "₦1,500 per kg. Delivery within Lagos.",
+                          "fontFamily": "$font-saans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CUcQe",
+                  "name": "Spacer 6",
+                  "width": "fill_container",
+                  "height": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "MCEKN",
+                  "name": "Message 4",
+                  "width": "fill_container",
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "y6ATIh",
+                      "name": "Chat Bubble",
+                      "fill": "$electric-violet",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "N3QQR9",
+                          "name": "Message Text",
+                          "fill": "$pure-white",
+                          "content": "I'll take 2kg. My address...",
+                          "fontFamily": "$font-saans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qtbGi",
+                  "layoutPosition": "absolute",
+                  "x": 362,
+                  "y": 274,
+                  "name": "Purchase Tag",
+                  "width": 120,
+                  "height": 32,
+                  "fill": "#0007cb",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ej8nv",
+                      "name": "Check Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "check-circle",
+                      "library": "lucide",
+                      "fill": "#ffffff"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ALP64",
+                      "name": "Purchase Text",
+                      "fill": "#ffffff",
+                      "content": " Paid",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "J8S2WZ",
+                  "layoutPosition": "absolute",
+                  "x": 322,
+                  "y": 314,
+                  "name": "Receipt Paper",
+                  "width": 180,
+                  "height": 200,
+                  "fill": "#ffffff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wep0y",
+                      "name": "Receipt Store",
+                      "fill": "#111111",
+                      "content": "FreshMart",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "AUQa1",
+                      "name": "Receipt Date",
+                      "fill": "#888888",
+                      "content": "Jan 15, 2025",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "naN1A",
+                      "name": "Receipt Divider",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#dedbd6"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bH1kV",
+                      "name": "Receipt Item Tomatoes 2kg",
+                      "width": "fill_container",
+                      "height": 24,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kmGa4",
+                          "name": "Item Name",
+                          "fill": "#585858",
+                          "content": "Tomatoes 2kg",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "N2efCn",
+                          "name": "Item Price",
+                          "fill": "#585858",
+                          "content": "₦3,000",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AAHSr",
+                      "name": "Receipt Item Plantains",
+                      "width": "fill_container",
+                      "height": 24,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "H9TEPR",
+                          "name": "Item Name",
+                          "fill": "#585858",
+                          "content": "Plantains",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fMuld",
+                          "name": "Item Price",
+                          "fill": "#585858",
+                          "content": "₦3,200",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RZrts",
+                      "name": "Receipt Item Delivery",
+                      "width": "fill_container",
+                      "height": 24,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "c6BJ2",
+                          "name": "Item Name",
+                          "fill": "#585858",
+                          "content": "Delivery",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "OXAoc",
+                          "name": "Item Price",
+                          "fill": "#585858",
+                          "content": "₦500",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EK2jj",
+                      "name": "Receipt Divider 2",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#dedbd6"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZtjMi",
+                      "name": "Receipt Total",
+                      "width": "fill_container",
+                      "height": 28,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KsnwD",
+                          "name": "Total Label",
+                          "fill": "#111111",
+                          "content": "Total",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xndez",
+                          "name": "Total Amount",
+                          "fill": "#0007cb",
+                          "content": "₦6,700",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "group",
+                  "id": "aJBkI",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "c3bW7",
+                      "x": 21.599370563441653,
+                      "y": 106.76607785669091,
+                      "geometry": "M29.6704 26.0416c-0.8704-1.4976-1.91361-2.592-3.1296-3.296-1.088-0.6336-2.04159-0.7808-2.848-0.448l-0.2752 0.1344c-0.864 0.4928-1.2992 1.44-1.2992 2.8352 0 1.3952 0.4352 2.8416 1.2992 4.3392 0.864 1.4912 1.9072 2.592 3.1232 3.2896 1.216 0.70399 2.2592 0.8128 3.1296 0.3136 0.864-0.4928 1.2992-1.4336 1.2992-2.8352 0-1.4016-0.4352-2.8416-1.2992-4.3328m-22.1248-12.7744c-0.864-1.4912-1.9072-2.592-3.1232-3.296-1.088-0.6272-2.0416-0.7808-2.848-0.4416l-0.2752 0.1344c-0.8704 0.4928-1.2992 1.4336-1.2992 2.8352 0 1.4016 0.4288 2.8352 1.2992 4.3328 0.864 1.4976 1.9072 2.59201 3.1232 3.296 1.216 0.704 2.2592 0.8064 3.1232 0.3136 0.864-0.49281 1.2992-1.44 1.2992-2.8352 0-1.3952-0.4352-2.8416-1.2992-4.3392m36.224 0.5568c0 0.7168-0.2112 1.1968-0.64 1.44l-0.128 0.064-2.9632 1.4848-5.1008 2.5472-4.608 2.304c0.4288-0.2432 0.64-0.7232 0.64-1.44 0-0.47359-0.0896-0.94721-0.2752-1.4272-0.10107-0.25909-0.22307-0.50952-0.3648-0.7488-0.4224-0.7296-0.9472-1.28-1.5744-1.6384l-7.2128-4.1664-8.64-4.992-3.1488-1.8176-5.3312-3.0784 4.7104-2.3552 5.3504 3.0912 5.4784 3.1616 3.3728 1.94561c0.81281 0.4736 1.5616 0.672 2.24 0.5952q0.384-0.0384 0.7104-0.19201l2.1632-1.0816 4.71041-2.3616 8.39679 4.8512c0.6272 0.3584 1.152 0.9088 1.5744 1.6384 0.4288 0.7296 0.64 1.4528 0.64 2.176",
+                      "fill": "#0007ccff",
+                      "width": 106.80994496408955,
+                      "height": 81.79292889444525,
+                      "stroke": "#ffffffff",
+                      "strokeWidth": 2.6399999999999997,
+                      "strokeLinejoin": "round",
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "qazqB",
+                      "x": 22.676998713537046,
+                      "y": 23.148547718492637,
+                      "geometry": "M8.6912 34.26559l-4.7104 2.35521 2.432-3.66721 2.2784 1.312z m38.72639-10.3424l-7.85279 11.71201c-0.2112 0.32-0.4608 0.5696-0.74881 0.736l-0.26879 0.1344-5.8304 2.9184-4.71041 2.36159-2.1632 1.08161c0.3648-0.1728 0.67201-0.448 0.9216-0.83201l0.46721-0.69759 2.4576-3.6608 2.45119-3.66081 2.47681-3.69279c0.4032-0.6528 0.3904-1.5424-0.0576-2.6624-0.4416-1.1264-1.0816-1.9328-1.9328-2.4192l-19.0016-10.976-13.6256-7.8656 9.4272-4.7168 3.3728-1.6832 32.6272 18.8416c0.8512 0.4864 1.4912 1.2928 1.93279 2.4192 0.448 1.12 0.4608 2.0096 0.0576 2.6624",
+                      "fill": "#0007ccff",
+                      "width": 116.42204400537126,
+                      "height": 104.60782524886436,
+                      "stroke": "#ffffffff",
+                      "strokeWidth": 2.6399999999999997,
+                      "strokeLinejoin": "round",
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "lkJE0",
+                      "x": 1.8741246817987758,
+                      "y": 0,
+                      "geometry": "M21.3248 9.48603l-3.3728 1.6832-9.4272 4.7168-1.4976-4.48c-0.17961-0.56376-0.45927-1.09056-0.8256-1.5552-0.3712-0.4672-0.7552-0.8192-1.1648-1.0496l-3.5904-2.0736c-0.5632-0.3264-1.0432-0.4096-1.4464-0.2496l12.6656-6.336c0.4288-0.2368 0.9536-0.1792 1.5808 0.1856l3.5904 2.0736c0.4096 0.2304 0.7936 0.5824 1.1648 1.0496 0.36633 0.46463 0.64599 0.99144 0.8256 1.5552l1.4976 4.48z",
+                      "fill": "#0007ccff",
+                      "width": 52.038414168402596,
+                      "height": 38.76630615067866,
+                      "stroke": "#ffffffff",
+                      "strokeWidth": 2.6399999999999997,
+                      "strokeLinejoin": "round",
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "i4weFW",
+                      "x": 0,
+                      "y": 15.61553825549936,
+                      "geometry": "M43.9104 33.41015l-2.47681 3.69279-2.4512 3.6608-2.4576 3.66081-0.4672 0.69759c-0.24959 0.384-0.5568 0.6592-0.9216 0.83201q-0.32639 0.1536-0.7104 0.192c-0.6784 0.0768-1.4272-0.1216-2.23999-0.5952l-3.37281-1.9456-5.4784-3.16161-5.3504-3.0912-2.2784-1.312-2.432 3.66721 5.3312 3.07839 3.1488 1.8176 8.64 4.992 7.21281 4.1664c0.6272 0.3584 1.152 0.9088 1.57439 1.6384q0.2208 0.3744 0.36481 0.7488c0.1856 0.48 0.2752 0.9536 0.2752 1.4272 0 0.7168-0.2112 1.1968-0.64 1.44-0.4224 0.2432-0.94721 0.1792-1.5744-0.1792l-1.6-0.9216-9.20961-5.3184-12.90239-7.4496-0.6208-0.3584c-1.6576-0.96-2.912-2.5216-3.7632-4.67839-0.8448-2.1632-0.8832-3.8464-0.1088-5.0496l2.9888-4.4928-7.968-23.8912-2.208-1.2736c-0.6272-0.3648-1.152-0.9088-1.5808-1.6384-0.4224-0.736-0.6336-1.4592-0.6336-2.176 0-0.7168 0.2112-1.2032 0.6336-1.4464l0.1344-0.064c0.4032-0.16 0.8832-0.0768 1.4464 0.2496l3.5904 2.0736c0.4096 0.2304 0.7936 0.5824 1.1648 1.0496 0.36633 0.46463 0.64599 0.99144 0.8256 1.5552l1.4976 4.48 13.6256 7.86559 19.00159 10.976c0.8512 0.4864 1.4912 1.2928 1.9328 2.41921 0.448 1.12 0.4608 2.0096 0.0576 2.66239",
+                      "fill": "#0007ccff",
+                      "width": 107.86350258224378,
+                      "height": 144.37103262205687,
+                      "stroke": "#ffffffff",
+                      "strokeWidth": 2.6399999999999997,
+                      "strokeLinejoin": "round",
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "lcIoc",
+                      "x": 24.76977356332111,
+                      "y": 125.7885144738018,
+                      "geometry": "M42.4704 16.17921c0 1.4016-0.4352 2.3424-1.2992 2.83519l-0.2752 0.1344-12.5248 6.26561c0.864-0.4928 1.2992-1.4336 1.2992-2.83521 0-1.4016-0.4352-2.8416-1.2992-4.33279-0.8704-1.4976-1.9136-2.592-3.1296-3.29601-1.088-0.6336-2.04159-0.7808-2.848-0.448l3.4624-1.7344 1.6 0.92161c0.6272 0.3584 1.152 0.42241 1.5744 0.17919l4.608-2.30399 5.1008-2.5472c0.92161 0.6848 1.73441 1.6256 2.432 2.82879 0.864 1.4912 1.29919 2.9376 1.2992 4.33281m-20.0768-1.67681l-0.2752 0.1344m-14.5728-4.8256c0-1.3952-0.4352-2.8416-1.2992-4.3392-0.864-1.4912-1.9072-2.592-3.1232-3.296-1.088-0.6272-2.0416-0.7808-2.848-0.4416l3.4688-1.7344 12.9024 7.4496-10.4 5.1968c0.864-0.4928 1.2992-1.44 1.2992-2.8352m-7.2704-8.0768l-0.2752 0.1344",
+                      "fill": "#0007ccff",
+                      "width": 103.63952334637618,
+                      "height": 62.01818284704898,
+                      "stroke": "#ffffffff",
+                      "strokeWidth": 2.6399999999999997,
+                      "strokeLinejoin": "round",
+                      "strokeLinecap": "round"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "CBDOQ",
+          "name": "Image Strip",
+          "width": "fill_container",
+          "height": 140,
+          "fill": "#f1eee9",
+          "gap": 4,
+          "children": [
+            {
+              "type": "frame",
+              "id": "JZ5i8",
+              "name": "Stock Image 1",
+              "metadata": {
+                "type": "unsplash",
+                "username": "aimem",
+                "link": "https://unsplash.com/@aimem",
+                "author": "Marion Mesbah"
+              },
+              "width": "fill_container",
+              "height": 140,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1694957932193-576ddb4cf4f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA1NzU1MTV8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "FZasz",
+              "name": "Stock Image 2",
+              "metadata": {
+                "type": "unsplash",
+                "username": "planeteelevene",
+                "link": "https://unsplash.com/@planeteelevene",
+                "author": "Muhammad-Taha Ibrahim"
+              },
+              "width": "fill_container",
+              "height": 140,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1761370571806-886404629697?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA1NzU1MTV8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "FIgbc",
+              "name": "Stock Image 3",
+              "metadata": {
+                "type": "unsplash",
+                "username": "carrier_lost",
+                "link": "https://unsplash.com/@carrier_lost",
+                "author": "Ian Taylor"
+              },
+              "width": "fill_container",
+              "height": 140,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1597155135675-d4cef690184a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA1NzU1MTV8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "NHryt",
+              "name": "Stock Image 4",
+              "metadata": {
+                "type": "unsplash",
+                "username": "sanoyatra",
+                "link": "https://unsplash.com/@sanoyatra",
+                "author": "Sushanta Rokka"
+              },
+              "width": "fill_container",
+              "height": 140,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1781276532606-12957bd9a930?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA1NzU1MTV8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "B1b4wD",
+              "name": "Stock Image 5",
+              "metadata": {
+                "type": "unsplash",
+                "username": "1hundredimages",
+                "link": "https://unsplash.com/@1hundredimages",
+                "author": "Ben Iwara"
+              },
+              "width": "fill_container",
+              "height": 140,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1765584830370-085bddbf863f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTA1NzU1MTV8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YFeIR",
+          "name": "Features Section",
+          "width": "fill_container",
+          "fill": "#f1eee9",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": 80,
+          "children": [
+            {
+              "type": "text",
+              "id": "pGf17",
+              "name": "Features Headline",
+              "fill": "#111111",
+              "content": "Connect in three simple steps",
+              "fontFamily": "Inter",
+              "fontSize": 54,
+              "fontWeight": "300"
+            },
+            {
+              "type": "frame",
+              "id": "oZEaO",
+              "name": "Features Row",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "d4isC",
+                  "name": "Feature 01",
+                  "width": "fill_container",
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    32,
+                    32,
+                    24,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bS3tg",
+                      "name": "Feature Number",
+                      "fill": "#0007cb",
+                      "content": "01",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gannX",
+                      "name": "Feature Title",
+                      "fill": "#111111",
+                      "content": "Find vendors",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jpmzp",
+                      "name": "Feature Desc",
+                      "fill": "#585858",
+                      "content": "Browse verified vendors selling what you need",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JMHF5",
+                      "name": "Step 1 Circle",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "#0007cb",
+                      "cornerRadius": 28,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "be0eM",
+                          "name": "Step 1",
+                          "fill": "#ffffff",
+                          "content": "1",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l7bEJM",
+                      "name": "Button 1",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#0007cb",
+                      "cornerRadius": 4,
+                      "padding": [
+                        12,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rJ3rG",
+                          "name": "Button Text 1",
+                          "fill": "#ffffff",
+                          "content": "Browse Vendors",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h1agF",
+                      "name": "Spacer Before Button 1",
+                      "width": "fill_container",
+                      "height": 24
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WLVFT",
+                  "name": "Feature 02",
+                  "width": "fill_container",
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    32,
+                    32,
+                    24,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rNFDc",
+                      "name": "Feature Number",
+                      "fill": "#0007cb",
+                      "content": "02",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "A2RX6S",
+                      "name": "Feature Title",
+                      "fill": "#111111",
+                      "content": "Chat on WhatsApp",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GtjYm",
+                      "name": "Feature Desc",
+                      "fill": "#585858",
+                      "content": "Message vendors directly and negotiate",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "r7QH8w",
+                      "name": "Step 2 Circle",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "#0007cb",
+                      "cornerRadius": 28,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NO6R2",
+                          "name": "Step 2",
+                          "fill": "#ffffff",
+                          "content": "2",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Osfd4",
+                      "name": "Button 2",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#0007cb",
+                      "cornerRadius": 4,
+                      "padding": [
+                        12,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yDg17",
+                          "name": "Button Text 2",
+                          "fill": "#ffffff",
+                          "content": "Start Chat",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kCQyz",
+                      "name": "Spacer Before Button 2",
+                      "width": "fill_container",
+                      "height": 24
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "x78Pso",
+                  "name": "Feature 03",
+                  "width": "fill_container",
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    32,
+                    32,
+                    24,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yrdIB",
+                      "name": "Feature Number",
+                      "fill": "#0007cb",
+                      "content": "03",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Mvs96",
+                      "name": "Feature Title",
+                      "fill": "#111111",
+                      "content": "Buy & Deliver",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SRAdr",
+                      "name": "Feature Desc",
+                      "fill": "#585858",
+                      "content": "Safe payments and reliable delivery",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dGUJC",
+                      "name": "Step 3 Circle",
+                      "width": 56,
+                      "height": 56,
+                      "fill": "#0007cb",
+                      "cornerRadius": 28,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XcNii",
+                          "name": "Step 3",
+                          "fill": "#ffffff",
+                          "content": "3",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kOCe7",
+                      "name": "Button 3",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#0007cb",
+                      "cornerRadius": 4,
+                      "padding": [
+                        12,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g3DtU",
+                          "name": "Button Text 3",
+                          "fill": "#ffffff",
+                          "content": "Shop Now",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WMZV1",
+                      "name": "Spacer Before Button 3",
+                      "width": "fill_container",
+                      "height": 24
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZQwQ4",
+          "name": "Stats Section",
+          "width": "fill_container",
+          "height": 350,
+          "fill": "#faf9f6",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            80,
+            80,
+            60,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "S4qbTk",
+              "name": "Stats Headline",
+              "fill": "#111111",
+              "content": "Join thousands of vendors growing their business",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 40,
+              "fontWeight": "300"
+            },
+            {
+              "type": "frame",
+              "id": "AwT7y",
+              "name": "Stats Row",
+              "width": "fill_container",
+              "height": 100,
+              "gap": 64,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ohWoM",
+                  "name": "Stat Active Vendors",
+                  "width": 180,
+                  "height": 100,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "I6lGi",
+                      "name": "Stat Value",
+                      "fill": "#111111",
+                      "content": "5,000+",
+                      "fontFamily": "Inter",
+                      "fontSize": 32,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FzrsG",
+                      "name": "Stat Label",
+                      "fill": "#585858",
+                      "content": "Active Vendors",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CIOid",
+                  "name": "Stat Monthly Orders",
+                  "width": 180,
+                  "height": 100,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UjriD",
+                      "name": "Stat Value",
+                      "fill": "#111111",
+                      "content": "50,000+",
+                      "fontFamily": "Inter",
+                      "fontSize": 32,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "X2AFfl",
+                      "name": "Stat Label",
+                      "fill": "#585858",
+                      "content": "Monthly Orders",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LGpuw",
+                  "name": "Stat Satisfaction",
+                  "width": 180,
+                  "height": 100,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p2mOKt",
+                      "name": "Stat Value",
+                      "fill": "#111111",
+                      "content": "95%",
+                      "fontFamily": "Inter",
+                      "fontSize": 32,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jSv7A",
+                      "name": "Stat Label",
+                      "fill": "#585858",
+                      "content": "Satisfaction",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kXNqV",
+          "name": "Vendor Section",
+          "width": "fill_container",
+          "height": 450,
+          "fill": "#f1eee9",
+          "gap": 80,
+          "padding": 80,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bHK1I",
+              "name": "Vendor Text",
+              "width": 841,
+              "height": 290,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "O1otk",
+                  "name": "Vendor Label",
+                  "fill": "#0007cb",
+                  "content": "FOR VENDORS",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "p3UKF",
+                  "name": "Vendor Headline",
+                  "fill": "#111111",
+                  "content": "Reach more buyers without building an app",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "FLhzo",
+                  "name": "Vendor Desc",
+                  "fill": "#585858",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "List your products, manage orders, and communicate with customers all through WhatsApp. No website needed, no commission fees.",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "VhoWu",
+                  "name": "Vendor CTA",
+                  "width": 160,
+                  "height": 48,
+                  "fill": "#000000",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vjvwW",
+                      "name": "Vendor CTA Text",
+                      "fill": "#ffffff",
+                      "content": "Become a vendor",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "group",
+              "id": "HQecr",
+              "rotation": 7.016709298534876e-15,
+              "children": [
+                {
+                  "type": "path",
+                  "id": "lEceq",
+                  "x": 0,
+                  "y": 24.323392609419216,
+                  "geometry": "M48.4608 69.53719c-0.1216 0.5248-0.352 0.8768-0.6848 1.0688-0.3328 0.1856-0.7552 0.2048-1.2736 0.04481-0.5184-0.1536-1.0496-0.55681-1.5872-1.19681l-14.0608-16.3264-5.472 3.1232c-0.4992 0.2816-1.0816 0.2304-1.7408-0.1536-0.6656-0.384-1.248-1.0048-1.7408-1.8624l-5.4784-9.44-7.712-4.4544c-0.704-0.4096-1.2992-1.024-1.7728-1.8432-0.48-0.8256-0.7168-1.6384-0.7168-2.4512l0-8.8512-5.472-9.44c-0.4992-0.8576-0.7488-1.6704-0.7488-2.432 0-0.7616 0.2496-1.28 0.7488-1.568l5.472-3.1168 0-8.8512c0-0.8128 0.2368-1.3504 0.7168-1.6256l0.1472-0.0704c0.448-0.1792 0.992-0.096 1.6256 0.2752l7.712 4.4544 2.5984-1.4784 2.88-1.6448 0.16-0.0768c0.4544-0.192 0.9856-0.1152 1.5808 0.2304 0.6592 0.3776 1.2416 0.9984 1.7408 1.8624l5.472 9.44 7.7184 4.4544c0.704 0.4032 1.2928 1.0176 1.7728 1.8432 0.4736 0.8192 0.7104 1.6384 0.7104 2.4448l0 8.8512 5.4784 9.4464c0.4928 0.8576 0.7424 1.664 0.7424 2.4256 0 0.7616-0.2496 1.2864-0.7424 1.568l-5.4784 3.1232 0.26241 0.7488 6.89279 19.5136c0.288 0.7872 0.3712 1.44 0.2496 1.9648",
+                  "fill": "#0007ccff",
+                  "width": 184.359362917934,
+                  "height": 268.88827615862976,
+                  "stroke": "#ffffffff",
+                  "strokeWidth": 4.64,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                },
+                {
+                  "type": "path",
+                  "id": "ADkOF",
+                  "x": 26.922609389604304,
+                  "y": 0,
+                  "geometry": "M21.7792 4.6164l-6.8032 3.4048-0.16 0.0768-2.88 1.6448-2.5984 1.4784-7.712-4.4544c-0.6336-0.3712-1.1776-0.4544-1.6256-0.2752l12.6528-6.3296c0.4736-0.2688 1.0688-0.2048 1.7728 0.2048l7.3536 4.2496z",
+                  "fill": "#0007ccff",
+                  "width": 82.76209673900956,
+                  "height": 42.641138265072726,
+                  "stroke": "#ffffffff",
+                  "strokeWidth": 4.64,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                },
+                {
+                  "type": "path",
+                  "id": "Q85pvJ",
+                  "x": 83.83219869864979,
+                  "y": 5.773382196994589,
+                  "geometry": "M21.5936 11.63471l-12.8 6.4-5.472-9.44c-0.4992-0.864-1.0816-1.4848-1.7408-1.8624-0.5952-0.3456-1.1264-0.4224-1.5808-0.2304l6.8032-3.4048 5.8368-2.9184c0.4928-0.2816 1.0752-0.2304 1.7408 0.1536 0.6592 0.3776 1.2416 0.9984 1.7408 1.8624l5.472 9.44z",
+                  "fill": "#0007ccff",
+                  "width": 82.05680597198645,
+                  "height": 68.53282760942373,
+                  "stroke": "#ffffffff",
+                  "strokeWidth": 4.64,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                },
+                {
+                  "type": "path",
+                  "id": "XUek9",
+                  "x": 117.24832410042313,
+                  "y": 49.985869521311315,
+                  "geometry": "M23.0016 8.7424l0 8.8512-12.8 6.4 0-8.8512c0-0.8064-0.2368-1.6256-0.7104-2.4448-0.48-0.8256-1.0688-1.44-1.7728-1.8432l-7.7184-4.4544 12.8-6.4 7.7184 4.4544c0.704 0.4032 1.2928 1.0176 1.77279 1.8432 0.4736 0.8192 0.7104 1.6384 0.7104 2.4448",
+                  "fill": "#0007ccff",
+                  "width": 87.40727590605324,
+                  "height": 91.17692995488913,
+                  "stroke": "#ffffffff",
+                  "strokeWidth": 4.64,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                },
+                {
+                  "type": "path",
+                  "id": "Y4Rxn",
+                  "x": 156.0149339323125,
+                  "y": 116.84247368714273,
+                  "geometry": "M19.0208 11.872c0 0.7616-0.2496 1.2864-0.7424 1.568l-5.4784 3.1232-12.8 6.4 5.4784-3.1232c0.4928-0.2816 0.7424-0.8064 0.7424-1.568 0-0.7616-0.2496-1.568-0.7424-2.4256l-5.4784-9.4464 12.8-6.4 5.4784 9.4464c0.4928 0.8576 0.7424 1.664 0.7424 2.4256m1.184 26.9184c-0.1216 0.5248-0.352 0.8768-0.6848 1.0688l-12.8 6.4c0.3328-0.19201 0.5632-0.544 0.6848-1.0688 0.1216-0.5248 0.0384-1.1776-0.2496-1.9648l-6.89279-19.5136-0.26241-0.7488 12.8-6.4 7.1552 20.26241c0.28799 0.7872 0.3712 1.44 0.2496 1.9648",
+                  "fill": "#0007ccff",
+                  "width": 76.98506606768744,
+                  "height": 175.78738165908555,
+                  "stroke": "#ffffffff",
+                  "strokeWidth": 4.64,
+                  "strokeLinejoin": "round",
+                  "strokeLinecap": "round"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kFyyq",
+          "name": "Buyer Section",
+          "width": "fill_container",
+          "height": 450,
+          "fill": "#faf9f6",
+          "gap": 80,
+          "padding": 80,
+          "children": [
+            {
+              "type": "frame",
+              "id": "OtTNf",
+              "name": "Buyer Visual",
+              "width": 560,
+              "height": 290,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "gotomart-assets/generated-4.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 4
+            },
+            {
+              "type": "frame",
+              "id": "BXnSl",
+              "name": "Buyer Text",
+              "width": 600,
+              "height": 290,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aNO0K",
+                  "name": "Buyer Label",
+                  "fill": "#0007cb",
+                  "content": "FOR BUYERS",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "F1TlZq",
+                  "name": "Buyer Headline",
+                  "fill": "#111111",
+                  "content": "Shop from trusted local vendors",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "tR1yW",
+                  "name": "Buyer Desc",
+                  "fill": "#585858",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "Discover quality products from verified sellers near you. Chat directly, compare prices, and buy with confidence all in one WhatsApp conversation.",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "vsIMb",
+                  "name": "Buyer CTA",
+                  "width": 140,
+                  "height": 48,
+                  "fill": "#000000",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Y7Rz52",
+                      "name": "Buyer CTA Text",
+                      "fill": "#ffffff",
+                      "content": "Start shopping",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "k5EUo",
+          "name": "CTA Section",
+          "width": "fill_container",
+          "height": 350,
+          "fill": "#f1eee9",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 80,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Iv9f6",
+              "name": "CTA Headline",
+              "fill": "#111111",
+              "content": "Ready to sell or shop?",
+              "fontFamily": "Inter",
+              "fontSize": 54,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "ZJ2Uo",
+              "name": "CTA Subtext",
+              "fill": "#585858",
+              "textGrowth": "fixed-width",
+              "width": 480,
+              "content": "Join thousands of Nigerians buying and selling on WhatsApp with GotoMart.",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "zkUrJ",
+              "name": "CTA Buttons",
+              "width": "fill_container",
+              "height": 56,
+              "gap": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "m74f4",
+                  "name": "Main CTA Button",
+                  "width": 180,
+                  "height": 56,
+                  "fill": "#0007cb",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sKRmn",
+                      "name": "Main CTA Text",
+                      "fill": "#ffffff",
+                      "content": "Get Started Free",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "V8XLbc",
+                  "name": "Secondary CTA",
+                  "fill": "#111111",
+                  "content": "Contact sales →",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Iq5Hy",
+          "name": "Customer Logos",
+          "width": "fill_container",
+          "height": 100,
+          "fill": "#faf9f6",
+          "gap": 64,
+          "padding": [
+            20,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "AgJga",
+              "name": "Partner TechMart",
+              "fill": "#b8b8b8",
+              "content": "TechMart",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "Q31kYx",
+              "name": "Partner Groceries NG",
+              "fill": "#b8b8b8",
+              "content": "Groceries NG",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "jjqKL",
+              "name": "Partner Fresh Foods",
+              "fill": "#b8b8b8",
+              "content": "Fresh Foods",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "C1HqD",
+              "name": "Partner CityMarket",
+              "fill": "#b8b8b8",
+              "content": "CityMarket",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "vqf0v",
+              "name": "Partner AfriShop",
+              "fill": "#b8b8b8",
+              "content": "AfriShop",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "text",
+              "id": "wRLYh",
+              "name": "Partner LocaMart",
+              "fill": "#b8b8b8",
+              "content": "LocaMart",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QrtwQ",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "#000000",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            64,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ogFrq",
+              "name": "Footer Top",
+              "width": "fill_container",
+              "height": 150,
+              "gap": 64,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vN9x0",
+                  "name": "Footer Logo",
+                  "width": 200,
+                  "height": 80,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "aRe8q",
+                      "name": "Frame 3",
+                      "gap": 8,
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Aoioe",
+                          "name": "Frame 2",
+                          "clip": true,
+                          "width": 35,
+                          "height": 35,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "path",
+                              "id": "Z7xXrr",
+                              "x": 0,
+                              "y": 0,
+                              "geometry": "M16.73572 0l1.54665 0c0.1656 0.03999 0.38999 0.04312 0.56482 0.05563 0.21397 0.01678 0.42759 0.0375 0.64087 0.06214 0.71145 0.08648 1.41778 0.21085 2.11607 0.37258 4.14565 0.99776 7.78237 3.47962 10.22246 6.97651l-2.79744 1.95882c-0.39717 0.27749-0.86235 0.58476-1.24141 0.8702-0.6096-0.82679-1.14382-1.45983-1.91457-2.15896-1.8158-1.61979-4.0614-2.67952-6.46612-3.05129-3.30466-0.50704-6.67526 0.32264-9.36704 2.30571-2.68907 1.98206-4.47668 4.95467-4.96675 8.25913-0.48216 3.25944 0.33371 6.57795 2.27225 9.24208 1.9592 2.68806 4.90586 4.48762 8.19186 5.00323 0.56325 0.0834 1.25648 0.15432 1.83223 0.1615 2.74001 0.01931 5.41201-0.8521 7.61387-2.48316 1.83767-1.36736 3.12778-3.06301 4.05935-5.13943l-4.41533-0.00085c-2.16768 0.00017-3.98432 0.15706-5.9312-1.02745-0.56619-0.34453-1.02248-0.6677-1.49553-1.14553-1.19357-1.19646-1.9434-2.76428-2.12557-4.44453-0.05433-0.49231-0.04895-1.06417-0.04652-1.55992-1.26957-0.0269-2.55131 0.01357-3.82103-0.01317-0.19274-0.00405-0.32179-0.15682-0.32497-0.34141-0.00279-0.08577 0.04956-0.17037 0.0969-0.2379 0.4307-0.5646 0.87343-1.12834 1.30962-1.68855l2.53664-3.26014 1.60544-2.06339c0.28369-0.36459 0.56925-0.75441 0.87937-1.09704 0.04221-0.0466 0.13125-0.05547 0.19073-0.05381 0.15637 0.01201 0.23311 0.09174 0.32402 0.20865 0.40024 0.51406 0.79997 1.03076 1.20022 1.54477l2.58091 3.31684 1.72539 2.21763c0.2167 0.28154 0.43784 0.56516 0.66001 0.84493 0.1926 0.24235 0.12031 0.59225-0.21465 0.6088-0.40794 0.02017-0.83928 0.00899-1.2532 0.00881l-2.55818 0.00152c-0.01624 0.95266-0.04649 1.70777 0.66805 2.45991 0.52107 0.5484 1.11289 0.7745 1.85852 0.775 1.01531 0.00069 2.03557 0.00017 3.05258-0.00016l5.84405 0.00051 2.40556-0.00103c0.27481-0.00017 0.96712-0.01692 1.20535 0.01128l0 0.35154c-0.05759 0.34128-0.03982 0.7834-0.0752 1.13784-0.06255 0.62685-0.13535 1.23884-0.25873 1.85733-0.83843 4.28169-3.24434 8.09648-6.7469 10.69807-2.6855 1.97883-5.77347 3.14932-9.08548 3.39011-0.23841 0.01743-0.52893 0.02153-0.76033 0.06665l-1.00854 0c-0.19915-0.04033-0.62563-0.04204-0.84658-0.05622-0.47782-0.03281-0.95395-0.08648-1.42708-0.16082-2.72556-0.43101-5.31166-1.49656-7.54966-3.11069-3.49744-2.52827-5.93537-6.26138-6.84395-10.48018-0.1325-0.60789-0.23087-1.22261-0.29466-1.8416-0.02912-0.30796-0.0545-0.91875-0.09989-1.18586l-0.003-0.01658 0-1.46161c0.04811-0.21764 0.063-0.65743 0.08629-0.90019 0.04608-0.46898 0.11103-0.93591 0.19469-1.39966 0.46804-2.57677 1.50557-5.01654 3.03684-7.14116 2.452-3.39385 6.04123-5.79432 10.11425-6.76439 0.73857-0.17218 1.48682-0.29985 2.2407-0.38232 0.32674-0.03768 0.731-0.04353 1.04205-0.09508l0.0209-0.00364z",
+                              "fill": "#ffffffff",
+                              "width": 35,
+                              "height": 35
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "OvPRb",
+                      "name": "Footer Logo Text",
+                      "fill": "#ffffff",
+                      "content": "GotoMart",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ubBI4",
+                      "name": "Footer Tagline",
+                      "fill": "#888888",
+                      "content": "Your WhatsApp marketplace",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ypR2F",
+                  "name": "Footer Col Product",
+                  "width": 120,
+                  "height": 150,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e7vpMd",
+                      "name": "Column Title",
+                      "fill": "#888888",
+                      "content": "Product",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "K4OSK",
+                      "name": "Footer Link Features",
+                      "fill": "#a0a0a0",
+                      "content": "Features",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nSwTl",
+                      "name": "Footer Link Pricing",
+                      "fill": "#a0a0a0",
+                      "content": "Pricing",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wLh26",
+                      "name": "Footer Link Vendors",
+                      "fill": "#a0a0a0",
+                      "content": "Vendors",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XzR3y",
+                      "name": "Footer Link Buyers",
+                      "fill": "#a0a0a0",
+                      "content": "Buyers",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Or2tb",
+                  "name": "Footer Col Company",
+                  "width": 120,
+                  "height": 150,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Q9PxzU",
+                      "name": "Column Title",
+                      "fill": "#888888",
+                      "content": "Company",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LRTFc",
+                      "name": "Footer Link About",
+                      "fill": "#a0a0a0",
+                      "content": "About",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j3Xbq",
+                      "name": "Footer Link Blog",
+                      "fill": "#a0a0a0",
+                      "content": "Blog",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "p1Ic1B",
+                  "name": "Footer Col Support",
+                  "width": 120,
+                  "height": 150,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZIg2F",
+                      "name": "Column Title",
+                      "fill": "#888888",
+                      "content": "Support",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WU8sb",
+                      "name": "Footer Link Help",
+                      "fill": "#a0a0a0",
+                      "content": "Help",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "SXH6b",
+                      "name": "Footer Link Contact",
+                      "fill": "#a0a0a0",
+                      "content": "Contact",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tDkCb",
+                      "name": "Footer Link Privacy",
+                      "fill": "#a0a0a0",
+                      "content": "Privacy",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G6PaqF",
+              "name": "Footer Divider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#414141"
+            },
+            {
+              "type": "text",
+              "id": "hSEjn",
+              "name": "Copyright",
+              "fill": "#a0a0a0",
+              "content": "© 2026 GotoMart. All rights reserved.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "v9zRf1",
+      "x": -567,
+      "y": 220,
+      "name": "logo",
+      "width": 199,
+      "height": 55,
+      "fill": "#d9d9d9ff",
+      "gap": 10,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "R79VwW",
+          "name": "Frame 2",
+          "clip": true,
+          "width": 35,
+          "height": 35,
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "CM40H",
+              "x": 0,
+              "y": 0,
+              "geometry": "M16.73572 0l1.54665 0c0.1656 0.03999 0.38999 0.04312 0.56482 0.05563 0.21397 0.01678 0.42759 0.0375 0.64087 0.06214 0.71145 0.08648 1.41778 0.21085 2.11607 0.37258 4.14565 0.99776 7.78237 3.47962 10.22246 6.97651l-2.79744 1.95882c-0.39717 0.27749-0.86235 0.58476-1.24141 0.8702-0.6096-0.82679-1.14382-1.45983-1.91457-2.15896-1.8158-1.61979-4.0614-2.67952-6.46612-3.05129-3.30466-0.50704-6.67526 0.32264-9.36704 2.30571-2.68907 1.98206-4.47668 4.95467-4.96675 8.25913-0.48216 3.25944 0.33371 6.57795 2.27225 9.24208 1.9592 2.68806 4.90586 4.48762 8.19186 5.00323 0.56325 0.0834 1.25648 0.15432 1.83223 0.1615 2.74001 0.01931 5.41201-0.8521 7.61387-2.48316 1.83767-1.36736 3.12778-3.06301 4.05935-5.13943l-4.41533-0.00085c-2.16768 0.00017-3.98432 0.15706-5.9312-1.02745-0.56619-0.34453-1.02248-0.6677-1.49553-1.14553-1.19357-1.19646-1.9434-2.76428-2.12557-4.44453-0.05433-0.49231-0.04895-1.06417-0.04652-1.55992-1.26957-0.0269-2.55131 0.01357-3.82103-0.01317-0.19274-0.00405-0.32179-0.15682-0.32497-0.34141-0.00279-0.08577 0.04956-0.17037 0.0969-0.2379 0.4307-0.5646 0.87343-1.12834 1.30962-1.68855l2.53664-3.26014 1.60544-2.06339c0.28369-0.36459 0.56925-0.75441 0.87937-1.09704 0.04221-0.0466 0.13125-0.05547 0.19073-0.05381 0.15637 0.01201 0.23311 0.09174 0.32402 0.20865 0.40024 0.51406 0.79997 1.03076 1.20022 1.54477l2.58091 3.31684 1.72539 2.21763c0.2167 0.28154 0.43784 0.56516 0.66001 0.84493 0.1926 0.24235 0.12031 0.59225-0.21465 0.6088-0.40794 0.02017-0.83928 0.00899-1.2532 0.00881l-2.55818 0.00152c-0.01624 0.95266-0.04649 1.70777 0.66805 2.45991 0.52107 0.5484 1.11289 0.7745 1.85852 0.775 1.01531 0.00069 2.03557 0.00017 3.05258-0.00016l5.84405 0.00051 2.40556-0.00103c0.27481-0.00017 0.96712-0.01692 1.20535 0.01128l0 0.35154c-0.05759 0.34128-0.03982 0.7834-0.0752 1.13784-0.06255 0.62685-0.13535 1.23884-0.25873 1.85733-0.83843 4.28169-3.24434 8.09648-6.7469 10.69807-2.6855 1.97883-5.77347 3.14932-9.08548 3.39011-0.23841 0.01743-0.52893 0.02153-0.76033 0.06665l-1.00854 0c-0.19915-0.04033-0.62563-0.04204-0.84658-0.05622-0.47782-0.03281-0.95395-0.08648-1.42708-0.16082-2.72556-0.43101-5.31166-1.49656-7.54966-3.11069-3.49744-2.52827-5.93537-6.26138-6.84395-10.48018-0.1325-0.60789-0.23087-1.22261-0.29466-1.8416-0.02912-0.30796-0.0545-0.91875-0.09989-1.18586l-0.003-0.01658 0-1.46161c0.04811-0.21764 0.063-0.65743 0.08629-0.90019 0.04608-0.46898 0.11103-0.93591 0.19469-1.39966 0.46804-2.57677 1.50557-5.01654 3.03684-7.14116 2.452-3.39385 6.04123-5.79432 10.11425-6.76439 0.73857-0.17218 1.48682-0.29985 2.2407-0.38232 0.32674-0.03768 0.731-0.04353 1.04205-0.09508l0.0209-0.00364z",
+              "fill": "#0007ccff",
+              "width": 35,
+              "height": 35
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UUhDH",
+          "name": "Logo",
+          "clip": true,
+          "width": 104,
+          "height": 29,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "CRPzj",
+              "x": 0,
+              "y": 0,
+              "name": "Logo Text",
+              "fill": "$ink",
+              "content": "GotoMart",
+              "fontFamily": "$font-saans",
+              "fontSize": 24,
+              "fontWeight": "300"
+            },
+            {
+              "type": "group",
+              "id": "GsL3E",
+              "x": -431,
+              "y": -252,
+              "name": "GotoMart G Logo",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "BZBfJ",
+                  "x": 0,
+                  "y": 0,
+                  "geometry": "M312.08926 73.21848c-48.52942-69.37183-140.41604-92.95804-216.35805-55.53659-75.94202 37.42146-113.22046 124.65548-87.77657 205.40304 25.44389 80.74753 105.99823 130.85193 189.67491 117.9769 83.67669-12.87509 145.44281-84.8779 145.43573-169.53934",
+                  "width": 343.0652847290039,
+                  "height": 343.07186126708984,
+                  "stroke": "#000",
+                  "strokeWidth": 56.32
+                },
+                {
+                  "type": "path",
+                  "id": "kZ4dV",
+                  "x": 171.54529571533203,
+                  "y": 120.32247161865234,
+                  "geometry": "M148.47998 79.36002l-92.15997 0c-31.10468 0-56.32001-25.21533-56.32001-56.32001l0-23.04001",
+                  "width": 148.47998046875,
+                  "height": 79.36001586914062,
+                  "stroke": "#000",
+                  "strokeWidth": 56.32
+                },
+                {
+                  "type": "path",
+                  "id": "f90m0e",
+                  "x": 99.86528778076172,
+                  "y": 38.40248107910156,
+                  "geometry": "M71.68001 0l71.67999 92.16-143.36 0 71.68001-92.16z",
+                  "fill": "#000000",
+                  "width": 143.36000061035156,
+                  "height": 92.15999603271484,
+                  "stroke": "#000",
+                  "strokeWidth": 7.68,
+                  "strokeLinejoin": "round"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PSgNY",
+      "x": 1600,
+      "y": 80,
+      "name": "GotoMart Vendor Page",
+      "width": 1440,
+      "fill": "#faf9f6",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "x2uWrk",
+          "name": "Vendor Nav",
+          "width": "fill_container",
+          "padding": [
+            20,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "goxDe",
+              "name": "Frame 4",
+              "width": 282,
+              "height": 37,
+              "gap": 195.33333333333348,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "eSB4A",
+                  "name": "Frame 2",
+                  "clip": true,
+                  "width": 35,
+                  "height": 35,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "GVqDr",
+                      "x": 0,
+                      "y": 0,
+                      "geometry": "M16.73572 0l1.54665 0c0.1656 0.03999 0.38999 0.04312 0.56482 0.05563 0.21397 0.01678 0.42759 0.0375 0.64087 0.06214 0.71145 0.08648 1.41778 0.21085 2.11607 0.37258 4.14565 0.99776 7.78237 3.47962 10.22246 6.97651l-2.79744 1.95882c-0.39717 0.27749-0.86235 0.58476-1.24141 0.8702-0.6096-0.82679-1.14382-1.45983-1.91457-2.15896-1.8158-1.61979-4.0614-2.67952-6.46612-3.05129-3.30466-0.50704-6.67526 0.32264-9.36704 2.30571-2.68907 1.98206-4.47668 4.95467-4.96675 8.25913-0.48216 3.25944 0.33371 6.57795 2.27225 9.24208 1.9592 2.68806 4.90586 4.48762 8.19186 5.00323 0.56325 0.0834 1.25648 0.15432 1.83223 0.1615 2.74001 0.01931 5.41201-0.8521 7.61387-2.48316 1.83767-1.36736 3.12778-3.06301 4.05935-5.13943l-4.41533-0.00085c-2.16768 0.00017-3.98432 0.15706-5.9312-1.02745-0.56619-0.34453-1.02248-0.6677-1.49553-1.14553-1.19357-1.19646-1.9434-2.76428-2.12557-4.44453-0.05433-0.49231-0.04895-1.06417-0.04652-1.55992-1.26957-0.0269-2.55131 0.01357-3.82103-0.01317-0.19274-0.00405-0.32179-0.15682-0.32497-0.34141-0.00279-0.08577 0.04956-0.17037 0.0969-0.2379 0.4307-0.5646 0.87343-1.12834 1.30962-1.68855l2.53664-3.26014 1.60544-2.06339c0.28369-0.36459 0.56925-0.75441 0.87937-1.09704 0.04221-0.0466 0.13125-0.05547 0.19073-0.05381 0.15637 0.01201 0.23311 0.09174 0.32402 0.20865 0.40024 0.51406 0.79997 1.03076 1.20022 1.54477l2.58091 3.31684 1.72539 2.21763c0.2167 0.28154 0.43784 0.56516 0.66001 0.84493 0.1926 0.24235 0.12031 0.59225-0.21465 0.6088-0.40794 0.02017-0.83928 0.00899-1.2532 0.00881l-2.55818 0.00152c-0.01624 0.95266-0.04649 1.70777 0.66805 2.45991 0.52107 0.5484 1.11289 0.7745 1.85852 0.775 1.01531 0.00069 2.03557 0.00017 3.05258-0.00016l5.84405 0.00051 2.40556-0.00103c0.27481-0.00017 0.96712-0.01692 1.20535 0.01128l0 0.35154c-0.05759 0.34128-0.03982 0.7834-0.0752 1.13784-0.06255 0.62685-0.13535 1.23884-0.25873 1.85733-0.83843 4.28169-3.24434 8.09648-6.7469 10.69807-2.6855 1.97883-5.77347 3.14932-9.08548 3.39011-0.23841 0.01743-0.52893 0.02153-0.76033 0.06665l-1.00854 0c-0.19915-0.04033-0.62563-0.04204-0.84658-0.05622-0.47782-0.03281-0.95395-0.08648-1.42708-0.16082-2.72556-0.43101-5.31166-1.49656-7.54966-3.11069-3.49744-2.52827-5.93537-6.26138-6.84395-10.48018-0.1325-0.60789-0.23087-1.22261-0.29466-1.8416-0.02912-0.30796-0.0545-0.91875-0.09989-1.18586l-0.003-0.01658 0-1.46161c0.04811-0.21764 0.063-0.65743 0.08629-0.90019 0.04608-0.46898 0.11103-0.93591 0.19469-1.39966 0.46804-2.57677 1.50557-5.01654 3.03684-7.14116 2.452-3.39385 6.04123-5.79432 10.11425-6.76439 0.73857-0.17218 1.48682-0.29985 2.2407-0.38232 0.32674-0.03768 0.731-0.04353 1.04205-0.09508l0.0209-0.00364z",
+                      "fill": "#0007ccff",
+                      "width": 35,
+                      "height": 35
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "X2OIZ9",
+                  "name": "Vendor Logo",
+                  "fill": "#111111",
+                  "content": "GotoMart for Vendors",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "300"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Hrx8m",
+              "name": "Nav Links",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Z3v7yK",
+                  "name": "Features",
+                  "fill": "#585858",
+                  "content": "Features",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "p83FzT",
+                  "name": "Pricing",
+                  "fill": "#585858",
+                  "content": "Pricing",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "rNM8k",
+                  "name": "Support",
+                  "fill": "#585858",
+                  "content": "Support",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "H3CKkd",
+                  "name": "Login",
+                  "fill": "#585858",
+                  "content": "Login",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D7dNom",
+              "name": "Start Selling",
+              "fill": "#000000",
+              "cornerRadius": 4,
+              "padding": [
+                14,
+                24
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lCPE5",
+                  "name": "CTA Text",
+                  "fill": "#ffffff",
+                  "content": "Start Selling",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "g5VtW",
+          "name": "Vendor Hero",
+          "width": "fill_container",
+          "fill": "#faf9f6",
+          "gap": 64,
+          "padding": [
+            96,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "piLC6",
+              "name": "Hero Text",
+              "width": 628,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "d6lXZ",
+                  "name": "Vendor Label",
+                  "fill": "#0007cb",
+                  "content": "FOR VENDORS",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "letterSpacing": 1.2
+                },
+                {
+                  "type": "text",
+                  "id": "A7l3I",
+                  "name": "Vendor Headline",
+                  "fill": "#111111",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Sell your products on WhatsApp",
+                  "fontFamily": "Inter",
+                  "fontSize": 80,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "F2Z2tB",
+                  "name": "Vendor Subtext",
+                  "fill": "#585858",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "Join thousands of vendors reaching customers directly on WhatsApp. No app to build, no fees to pay.",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "MyJcN",
+                  "name": "Hero Buttons",
+                  "gap": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nbQwP",
+                      "name": "Primary Button",
+                      "fill": "#0007cb",
+                      "cornerRadius": 4,
+                      "padding": [
+                        18,
+                        32
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZFIwn",
+                          "name": "Primary Text",
+                          "fill": "#ffffff",
+                          "content": "Get Started Free",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "INMCn",
+              "name": "Vendor Signup Form",
+              "width": 548,
+              "fill": "#ffffff",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "j8Hidd",
+                  "name": "Form Title",
+                  "fill": "#111111",
+                  "content": "Create your shop",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "sYoNl",
+                  "name": "Form Subtitle",
+                  "fill": "#585858",
+                  "content": "Your WhatsApp catalog will be stored securely",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "q95JqM",
+                  "name": "Field Your Name",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Bpr91",
+                      "name": "Field Label",
+                      "fill": "#111111",
+                      "content": "Your Name",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "UVy7b",
+                      "name": "Field Input",
+                      "fill": "#faf9f6",
+                      "width": "fill_container",
+                      "height": 44,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EVnJ9",
+                  "name": "Field Business Name",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lHTx4",
+                      "name": "Field Label",
+                      "fill": "#111111",
+                      "content": "Business Name",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "UVKwP",
+                      "name": "Field Input",
+                      "fill": "#faf9f6",
+                      "width": "fill_container",
+                      "height": 44,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fAYfZ",
+                  "name": "Field WhatsApp Number",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tsulN",
+                      "name": "Field Label",
+                      "fill": "#111111",
+                      "content": "WhatsApp Number",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "pndcM",
+                      "name": "Field Input",
+                      "fill": "#faf9f6",
+                      "width": "fill_container",
+                      "height": 44,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "TIYWC",
+                  "name": "Field Email",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rePFZ",
+                      "name": "Field Label",
+                      "fill": "#111111",
+                      "content": "Email",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "iyDgv",
+                      "name": "Field Input",
+                      "fill": "#faf9f6",
+                      "width": "fill_container",
+                      "height": 44,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "H8pXEd",
+                  "name": "Catalog Field",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "d1Tuq",
+                      "name": "Catalog Label",
+                      "fill": "#111111",
+                      "content": "What do you sell? (Or Just drop your WhatsApp catalog)",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "idmXN",
+                      "name": "Catalog Input",
+                      "fill": "#faf9f6",
+                      "width": "fill_container",
+                      "height": 80,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "IE7Ur",
+                      "name": "Catalog Hint",
+                      "fill": "#888888",
+                      "content": "e.g. Fresh tomatoes, peppers, plantains, yams...",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "p1aDb",
+                      "name": "Image Upload Area",
+                      "width": "fill_container",
+                      "height": 120,
+                      "fill": "#f1eee9",
+                      "cornerRadius": 4,
+                      "stroke": "#dedbd6",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "LPKL9",
+                          "name": "Upload Icon",
+                          "width": 31,
+                          "height": 32,
+                          "icon": "upload-simple-light",
+                          "library": "phosphor",
+                          "fill": "#0007cb"
+                        },
+                        {
+                          "type": "text",
+                          "id": "w3TquW",
+                          "name": "Upload Text",
+                          "fill": "#585858",
+                          "content": "Drop catalog images here",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MQxKg",
+                          "name": "Upload Subtext",
+                          "fill": "#888888",
+                          "content": "or click to upload",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "vrFNE",
+                      "name": "Upload Formats",
+                      "fill": "#888888",
+                      "content": "Supported: JPG, PNG, WEBP (max 5MB each)",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "R3gBlN",
+                  "name": "Database Note",
+                  "fill": "#0007cb",
+                  "content": "✓ Your catalog is stored securely in our database",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "xB7KJ",
+                  "name": "Submit Button",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#0007cb",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uNXhi",
+                      "name": "Submit Text",
+                      "fill": "#ffffff",
+                      "content": "Create My Shop",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tuuwz",
+          "name": "Vendor Stats",
+          "width": "fill_container",
+          "fill": "$pure-white",
+          "gap": 64,
+          "padding": 80,
+          "justifyContent": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "F3X3p",
+              "name": "Active Vendors",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uKe7Z",
+                  "name": "Stat Value",
+                  "fill": "#111111",
+                  "content": "5,000+",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "k2d8B",
+                  "name": "Stat Label",
+                  "fill": "#585858",
+                  "content": "Active Vendors",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lSjep",
+              "name": "Monthly Sales",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "su0Eq",
+                  "name": "Stat Value",
+                  "fill": "#111111",
+                  "content": "₦500M+",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "YjI8u",
+                  "name": "Stat Label",
+                  "fill": "#585858",
+                  "content": "Monthly Sales",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YJngx",
+              "name": "Commission Fee",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IhNmn",
+                  "name": "Stat Value",
+                  "fill": "#111111",
+                  "content": "0%",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "CfdNX",
+                  "name": "Stat Label",
+                  "fill": "#585858",
+                  "content": "Commission Fee",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LsUKu",
+          "name": "Vendor Features",
+          "width": "fill_container",
+          "fill": "#f1eee9",
+          "layout": "vertical",
+          "gap": 64,
+          "padding": [
+            96,
+            80
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "hVOQk",
+              "name": "Features Headline",
+              "fill": "#111111",
+              "content": "Everything you need to sell online",
+              "fontFamily": "Inter",
+              "fontSize": 54,
+              "fontWeight": "300"
+            },
+            {
+              "type": "frame",
+              "id": "aSJv8",
+              "name": "Features Grid",
+              "width": "fill_container",
+              "gap": 32,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kphaU",
+                  "name": "WhatsApp Store",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AUtjp",
+                      "name": "Card Title",
+                      "fill": "#111111",
+                      "content": "WhatsApp Store",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kHBLG",
+                      "name": "Card Desc",
+                      "fill": "#585858",
+                      "content": "Your own storefront in WhatsApp",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XeKrX",
+                      "name": "Learn More Link",
+                      "fill": "#0007cb",
+                      "content": "Try now →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lKX0J",
+                  "name": "Order Management",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z50xA",
+                      "name": "Card Title",
+                      "fill": "#111111",
+                      "content": "Order Management",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qvo2M",
+                      "name": "Card Desc",
+                      "fill": "#585858",
+                      "content": "Track and manage orders easily",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "d1rfgd",
+                      "name": "Learn More Link",
+                      "fill": "#0007cb",
+                      "content": "Learn more →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Mc3Sz",
+                  "name": "Instant Payments",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sYCFQ",
+                      "name": "Card Title",
+                      "fill": "#111111",
+                      "content": "Instant Payments",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "c3Jc8a",
+                      "name": "Card Desc",
+                      "fill": "#585858",
+                      "content": "Get paid directly to your bank",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "c9rnA",
+                      "name": "Learn More Link",
+                      "fill": "#0007cb",
+                      "content": "Learn more →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "koCwW",
+                  "name": "Customer Chat",
+                  "width": "fill_container",
+                  "height": 200,
+                  "fill": "#faf9f6",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "d1iHl",
+                      "name": "Card Title",
+                      "fill": "#111111",
+                      "content": "Customer Chat",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "D6VTU",
+                      "name": "Card Desc",
+                      "fill": "#585858",
+                      "content": "Talk to buyers in real-time",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yu5WK",
+                      "name": "Learn More Link",
+                      "fill": "#0007cb",
+                      "content": "Learn more →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vtuNX",
+              "name": "CTA Section",
+              "width": "fill_container",
+              "height": 350,
+              "fill": "#f1eee9",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 80,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EpEhD",
+                  "name": "CTA Headline",
+                  "fill": "#111111",
+                  "content": "Ready to sell or shop?",
+                  "fontFamily": "Inter",
+                  "fontSize": 54,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "o3wnfa",
+                  "name": "CTA Subtext",
+                  "fill": "#585858",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "Join thousands of Nigerians buying and selling on WhatsApp with GotoMart.",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "lRbIM",
+                  "name": "CTA Buttons",
+                  "width": "fill_container",
+                  "height": 56,
+                  "gap": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "p59CKW",
+                      "name": "Main CTA Button",
+                      "width": 180,
+                      "height": 56,
+                      "fill": "#0007cb",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F8brv",
+                          "name": "Main CTA Text",
+                          "fill": "#ffffff",
+                          "content": "Get Started Free",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "gnNUt",
+                      "name": "Secondary CTA",
+                      "fill": "#111111",
+                      "content": "Contact sales →",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lubgu",
+          "name": "Vendor Footer",
+          "width": "fill_container",
+          "fill": "#111111",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            64,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "L4UDX",
+              "name": "Footer Top",
+              "width": "fill_container",
+              "gap": 64,
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bOkW7",
+                  "name": "Footer Logo Section",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WDEUV",
+                      "name": "Footer Logo",
+                      "fill": "#ffffff",
+                      "content": "GotoMart for Vendors",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E75XN3",
+                      "name": "Footer Tagline",
+                      "fill": "#888888",
+                      "content": "Your WhatsApp marketplace",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B082QJ",
+                  "name": "Footer Links Section",
+                  "gap": 64,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "iXO53",
+                      "name": "Footer Column Product",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MEwIk",
+                          "name": "Column Title Product",
+                          "fill": "#888888",
+                          "content": "Product",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "z8AvN3",
+                          "name": "Footer Link Features",
+                          "fill": "#a0a0a0",
+                          "content": "Features",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Wm7LC",
+                          "name": "Footer Link Pricing",
+                          "fill": "#a0a0a0",
+                          "content": "Pricing",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Kjbjb",
+                          "name": "Footer Link How it works",
+                          "fill": "#a0a0a0",
+                          "content": "How it works",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kndpe",
+                      "name": "Footer Column Company",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Wf7L5",
+                          "name": "Column Title Company",
+                          "fill": "#888888",
+                          "content": "Company",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZrEog",
+                          "name": "Footer Link About",
+                          "fill": "#a0a0a0",
+                          "content": "About",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "cW6Ob",
+                          "name": "Footer Link Blog",
+                          "fill": "#a0a0a0",
+                          "content": "Blog",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ChAHy",
+                          "name": "Footer Link Careers",
+                          "fill": "#a0a0a0",
+                          "content": "Careers",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "iNGB6",
+                      "name": "Footer Column Support",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HTp9P",
+                          "name": "Column Title Support",
+                          "fill": "#888888",
+                          "content": "Support",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "gnEKJ",
+                          "name": "Footer Link Help Center",
+                          "fill": "#a0a0a0",
+                          "content": "Help Center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "B1yY9",
+                          "name": "Footer Link Contact",
+                          "fill": "#a0a0a0",
+                          "content": "Contact",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "D6w0b",
+                          "name": "Footer Link Privacy",
+                          "fill": "#a0a0a0",
+                          "content": "Privacy",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FyCQz",
+              "name": "Footer Divider",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#414141"
+            },
+            {
+              "type": "text",
+              "id": "Z8DRIG",
+              "name": "Footer Copyright",
+              "fill": "#888888",
+              "content": "© 2026 GotoMart. All rights reserved.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "electric-violet": {
+      "type": "color",
+      "value": "#0007cb"
+    },
+    "pure-white": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "canvas-cream": {
+      "type": "color",
+      "value": "#faf9f6"
+    },
+    "linen": {
+      "type": "color",
+      "value": "#f1eee9"
+    },
+    "stone": {
+      "type": "color",
+      "value": "#d3cec6"
+    },
+    "hairline": {
+      "type": "color",
+      "value": "#dedbd6"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#111111"
+    },
+    "carbon": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "iron": {
+      "type": "color",
+      "value": "#414141"
+    },
+    "graphite": {
+      "type": "color",
+      "value": "#585858"
+    },
+    "smoke": {
+      "type": "color",
+      "value": "#888888"
+    },
+    "ash": {
+      "type": "color",
+      "value": "#a0a0a0"
+    },
+    "silver": {
+      "type": "color",
+      "value": "#b8b8b8"
+    },
+    "font-saans": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "font-saansmono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "font-serrif": {
+      "type": "string",
+      "value": "Source Serif Pro"
+    }
+  },
+  "fileToken": "d319fa69-e9bc-412f-bdfb-a2ea04f05c65"
+}

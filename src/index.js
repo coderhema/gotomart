@@ -5,7 +5,7 @@ const path = require('path');
 
 const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
-const { sendText, sendVendorList, parseTwilioMessage, handleWebhookVerify } = require('./services/twilioService');
+const { sendText, sendVendorList, parseBaileysMessage, handleWebhookVerify, initBaileySocket, setMessageHandler } = require('./services/twilioService');
 const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
@@ -412,9 +412,27 @@ async function handlePaystackEvent(event) {
   }
 }
 
+// Init Baileys with message handler
+async function initWhatsApp() {
+  await initBaileySocket(async (msg) => {
+    console.log('[BAILEYS] 📨 Received:', msg.text.substring(0, 30) + '...', '| from:', msg.from);
+    try {
+      await handleTextMessage(msg.from, msg.text);
+    } catch (err) {
+      console.error('[BAILEYS] Error handling message:', err.message);
+    }
+  });
+}
+
+// Start Baileys
+setTimeout(initWhatsApp, 1000);
+
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
-  app.listen(PORT, () => console.log(`GoToMart backend running on port ${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`GoToMart backend running on port ${PORT}`);
+    console.log('⠋ Baileys WhatsApp connecting... (scan QR code when it appears)');
+  });
 }
 
 module.exports = app;

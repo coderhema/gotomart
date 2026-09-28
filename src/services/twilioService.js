@@ -1,90 +1,150 @@
 /**
- * Twilio WhatsApp Service - Alternative to Meta API for demos
- * Use when Meta is blocked or unavailable
+ * Baileys WhatsApp Service - WebSocket-based, no external API
+ * 
+ * Install: npm i @whiskeysockets/baileys
+ * Scan QR code on first run to link your WhatsApp number
  */
 
-const twilio = require('twilio');
+const { makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const { Boom } = require('@hapi/boom');
 
-const client = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
-  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-  : null;
+let sock = null;
+let messageBuffer = [];
+let messageHandler = null;
 
-const from = process.env.TWILIO_WHATSAPP_FROM; // e.g., whatsapp:+14155238886
+// Initialize Baileys socket
+async function initBaileySocket(onMessageReceived) {
+  if (sock) return sock;
 
-async function sendText(to, body) {
-  if (!client) {
-    console.log('[TWILIO MOCK] Sending text to', to, ':', body);
-    return { sid: 'MOCK_' + Date.now() };
-  }
-
-  return client.messages.create({
-    body,
-    from: from,
-    to: to.startsWith('whatsapp:') ? to : `whatsapp:${to}`
+  const { state, saveCreds } = await useMultiFileAuthState('baileys_auth');
+  
+  console.log('[BAILEYS] Connecting to WhatsApp...');
+  
+  sock = makeWASocket({
+    auth: state,
+    printQRInTerminal: true,
+    browser: ['GoToMart Bot', 'Chrome', '1.0.0'],
+    connectTimeoutMs: 60000,
   });
+
+  sock.ev.on('creds.update', saveCreds);
+  
+  sock.ev.on('connection.update', ({ connection, lastDisconnect, qr }) => {
+    if (qr) {
+      console.log('[BAILEYS] ═════════════════════════════════════════════════');
+      console.log('[BAILEYS]  📱 SCAN THIS QR CODE WITH YOUR WHATSAPP');
+      console.log('[BAILEYS]  Settings → Linked Devices → Link a Device');
+      console.log('[BAILEYS] ═════════════════════════════════════════════════');
+    }
+    if (connection === 'open') {
+      console.log('[BAILEYS] ✅ WhatsApp connected! Ready to receive messages.');
+    }
+    if (connection === 'close') {
+      const shouldReconnect = (lastDisconnect?.error instanceof Boom) 
+        ? lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut
+        : true;
+      console.log('[BAILEYS] Connection closed, reconnecting:', shouldReconnect);
+      if (shouldReconnect) {
+        initBaileySocket();
+      }
+    }
+  });
+
+  sock.ev.on('messages.upsert', async (m) => {
+    const msg = m.messages[0];
+    if (!msg || msg.key.fromMe) return;
+    
+    const message = {
+      from: msg.key.remoteJid.replace(/[@].*/, '').replace(/^\d+:/, ''),
+      text: msg.message?.conversation || msg.message?.extendedTextMessage?.text || '',
+      type: 'text',
+      fullMessage: msg
+    };
+    
+    // Use global messageHandler if set
+    const handler = onMessageReceived || messageHandler;
+    if (handler) {
+      handler(message);
+    } else {
+      console.log('[BAILEYS] Received (no handler):', message.text, 'from', message.from);
+    }
+  });
+
+  return sock;
 }
 
-/**
- * Send interactive list message (Twilio supports this via buttons)
- */
+// Send text message
+async function sendText(to, body) {
+  if (!sock) {
+    await initBaileySocket();
+  }
+  
+  const jid = to.includes('@') ? to : `${to}@s.whatsapp.net`;
+  
+  try {
+    await sock.sendMessage(jid, { text: body });
+    console.log('[BAILEYS] Sent to', to, ':', body.substring(0, 50) + '...');
+    return { id: Date.now().toString(), status: 'sent' };
+  } catch (err) {
+    console.error('[BAILEYS] Send error:', err.message);
+    throw err;
+  }
+}
+
+// Send vendor list
 async function sendVendorList(to, intent, vendorOrderPairs) {
-  // Twilio interactive messages work differently - send as structured message
   const vendorText = vendorOrderPairs.map(({ vendor, reference }, i) => {
-    return `${i + 1}. ${vendor.name}\n   ₦${vendor.price.toLocaleString()} • ${vendor.location}\n   (Reply ${i + 1} to select)`;
+    return `${i + 1}. ${vendor.name}\n   ₦${vendor.price?.toLocaleString() || vendor.price} • ${vendor.location}${vendor.verified ? ' ✅' : ''}`;
   }).join('\n\n');
 
-  const message = `🛒 Vendors for ${[intent.quantity, intent.item].filter(Boolean).join(' ')}${intent.location ? ` in ${intent.location}` : ''}:\n\n${vendorText}\n\nReply with the number to select.`;
+  const message = `🛒 GoToMart found ${vendorOrderPairs.length} vendors for ${[intent.quantity, intent.item].filter(Boolean).join(' ')}${intent.location ? ` in ${intent.location}` : ''}:
 
-  if (!client) {
-    console.log('[TWILIO MOCK] Sending vendor list to', to);
-    return { sid: 'MOCK_' + Date.now() };
-  }
+${vendorText}
 
-  return client.messages.create({
-    body: message,
-    from: from,
-    to: to.startsWith('whatsapp:') ? to : `whatsapp:${to}`
-  });
-}
-
-/**
- * Send Quick Reply buttons (as text with numbered options for Twilio)
- */
-async function sendQuickReplies(to, body, options) {
-  const optionsText = options.map((opt, i) => `${i + 1}. ${opt.text}`).join('\n');
-  const message = `${body}\n\n${optionsText}\n\nReply with a number.`;
+Reply with 1-${vendorOrderPairs.length} to select`;
 
   return sendText(to, message);
 }
 
-/**
- * Handle Twilio webhook - convert Twilio format to our internal format
- */
-function parseTwilioMessage(body) {
+// Send quick replies
+async function sendQuickReplies(to, body, options, title = '') {
+  const optionsText = options.map((opt, i) => `${i + 1}. ${opt.text}`).join('\n');
+  const message = `${title ? title + '\n\n' : ''}${body}\n\n${optionsText}\n\nReply with a number.`;
+  return sendText(to, message);
+}
+
+// Parse incoming message (Baileys format)
+function parseBaileysMessage(body) {
+  // When used via webhook, body might be the parsed format
   return {
-    from: body.From?.replace('whatsapp:', ''),
-    text: body.Body,
+    from: body.from,
+    text: body.text,
     type: 'text'
   };
 }
 
-// Twilio uses GET for webhook verification
+// Webhook verification - just return 200
 function handleWebhookVerify(req, res) {
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
+  res.sendStatus(200);
+}
 
-  if (mode === 'subscribe' && token === process.env.META_VERIFY_TOKEN) {
-    return res.status(200).send(challenge);
-  }
-  return res.sendStatus(403);
+// Message received handler setter
+function setMessageHandler(handler) {
+  messageHandler = handler;
+}
+
+// Get socket for direct access
+function getSocket() {
+  return sock;
 }
 
 module.exports = {
+  initBaileySocket,
   sendText,
   sendVendorList,
   sendQuickReplies,
-  parseTwilioMessage,
+  parseBaileysMessage,
   handleWebhookVerify,
-  client
+  setMessageHandler,
+  getSocket
 };

@@ -6,7 +6,6 @@ import HowItWorks from './components/HowItWorks'
 import ForVendors from './components/ForVendors'
 import ForBuyers from './components/ForBuyers'
 import Footer from './components/Footer'
-import ChatDemo from './components/ChatDemo'
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
       <Navigation />
       <main id="home">
         <Hero />
-        <ChatDemo />
         <Features />
         <HowItWorks />
         <ForVendors />

@@ -1,13 +1,12 @@
+import Atalanta from './Atalanta'
+
 function ChatDemo() {
   return (
     <section className="w-full bg-cream px-4 sm:px-6 lg:px-20 pb-16">
       <div className="max-w-7xl mx-auto flex justify-end">
         <div className="w-full lg:w-[520px] bg-cream-dark rounded p-8 relative">
           {/* Chat Header */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-navy rounded"></div>
-            <span className="text-sm font-semibold italic text-gray-900">Ata la n ta</span>
-          </div>
+          <Atalanta className="mb-4" />
 
           <div className="w-full h-px bg-light-gray mb-4"></div>
 

@@ -348,3 +348,7 @@ vercel --prod
 | **Messaging** | Meta WhatsApp Cloud API | Buyer/Vendor chat interface |
 | **Backend** | Node/Express | Webhook handling, business logic |
 | **Hosting** | Vercel | Serverless deployment |
+
+## Release notes
+
+See [RELEASE_NOTES.md](./RELEASE_NOTES.md) for versioned change summaries.

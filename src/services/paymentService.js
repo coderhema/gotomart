@@ -18,34 +18,59 @@ function bachsHeaders() {
  * so the payment webhook can look the order back up without extra state.
  */
 async function createCheckoutLink(buyerPhone, order) {
-  const { data } = await axios.post(
-    `${BACHS_BASE_URL}/v1/checkout-sessions`,
-    {
-      product_cart: [
-        {
-          product_id: 'prod_gotomart_default', // For MVP: create this product in Bachs dashboard
-          quantity: 1
-        }
-      ],
-      customer: {
-        email: `${buyerPhone}@gotomart.buyer`,
-        phone: buyerPhone
-      },
-      metadata: {
-        buyerPhone,
-        vendorUid: order.vendorUid,
-        item: order.item,
-        quantity: order.quantity,
-        price: order.price,
-        reference: order.reference
-      },
-      return_url: `${process.env.BASE_URL || 'https://gotomart.com'}/success`,
-      cancel_url: `${process.env.BASE_URL || 'https://gotomart.com'}/cancelled`
-    },
-    { headers: bachsHeaders() }
-  );
+  const productId = process.env.BACHS_PRODUCT_ID || 'prod_1208ae9a19954901bf40';
+  const amount = Number(order.price || 0);
+  const amountStr = amount.toFixed(2);
 
-  return data.data.url;
+  // Prefer product_cart when a catalog product exists; fall back to ad-hoc pricing
+  // so marketplace orders with dynamic prices still get a checkout URL.
+  const payload = {
+    customer: {
+      email: `${buyerPhone}@gotomart.buyer`,
+      phone: buyerPhone
+    },
+    metadata: {
+      buyerPhone,
+      vendorUid: order.vendorUid,
+      item: order.item,
+      quantity: order.quantity,
+      price: order.price,
+      reference: order.reference
+    },
+    return_url: `${process.env.BASE_URL || 'https://gotomart.com'}/success`,
+    cancel_url: `${process.env.BASE_URL || 'https://gotomart.com'}/cancelled`
+  };
+
+  if (productId) {
+    payload.product_cart = [{ product_id: productId, quantity: 1 }];
+  } else {
+    payload.pricing = { amount: amountStr, currency: 'NGN' };
+  }
+
+  try {
+    const { data } = await axios.post(
+      `${BACHS_BASE_URL}/v1/checkout-sessions`,
+      payload,
+      { headers: bachsHeaders() }
+    );
+    return data?.checkout_url || data?.data?.checkout_url || data?.data?.url || data?.url || null;
+  } catch (err) {
+    // If fixed product price mismatches order amount, retry with dynamic pricing
+    const detail = err.response?.data?.detail || err.message;
+    console.warn('[BACHS] product_cart checkout failed, retrying pricing:', detail);
+    const retryPayload = {
+      ...payload,
+      product_cart: undefined,
+      pricing: { amount: amountStr, currency: 'NGN' }
+    };
+    delete retryPayload.product_cart;
+    const { data } = await axios.post(
+      `${BACHS_BASE_URL}/v1/checkout-sessions`,
+      retryPayload,
+      { headers: bachsHeaders() }
+    );
+    return data?.checkout_url || data?.data?.checkout_url || data?.data?.url || data?.url || null;
+  }
 }
 
 /**

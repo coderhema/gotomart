@@ -1,70 +1,56 @@
-# Baileys WhatsApp Setup - Quick Hackathon Guide
+# Baileys WhatsApp Setup — Quick Guide
+
+For full production steps (hosting, webhooks, Airtable, BACHs), see **[WHATSAPP_DEPLOYMENT.md](./WHATSAPP_DEPLOYMENT.md)**.
 
 ## What is Baileys?
-WebSocket-based WhatsApp library - no Twilio/Meta API needed!
-- Your personal WhatsApp number becomes the bot
-- Scan QR code once, good for days
-- No $0 fees, no platform restrictions
 
----
+WebSocket-based WhatsApp client — no Meta Cloud / Twilio required for the primary path.
 
-## Quick Start
+- Your linked WhatsApp number becomes the bot
+- Scan QR once; session stored in `baileys_auth/` (gitignored)
+- Good for demos and always-on Node hosts
 
-1. **Install complete** ✓
+## Quick start
 
-2. **Run the server:**
 ```bash
+cp .env.example .env   # fill Airtable, BACHs, Cerebras, etc.
+npm install
 npm start
 ```
 
-3. **Scan QR code:**
-- First run: A QR code appears in terminal
-- Open WhatsApp on your phone
-- Settings → Linked Devices → Link a Device
-- Scan the QR code
+1. Scan the terminal QR: WhatsApp → **Linked Devices → Link a Device**
+2. Message the bot: `I need rice in Ikorodu`
+3. Select a vendor (`1`), complete checkout when offered
+4. Confirm order appears in Airtable `Orders`
 
-4. **Test it:**
-- Text yourself or a friend: "I need rice in Ikorodu"
-- Bot replies with vendors!
+## Purchase path test
 
----
-
-## How It Works
-
-```
-Your WhatsApp Number (as bot)
-      ↓
-[BAILEYS] WebSocket connection
-      ↓
-Your GoToMart Bot logic
-      ↓
-Airtable (vendors, orders)
-      ↓
-Paystack (payments)
+```bash
+node tests/test_purchase_flow.js
 ```
 
----
+## Flow
 
-## Demo Commands
+```
+WhatsApp (Baileys)
+  → GoToMart router / commerce engine
+  → Airtable (Vendors, Sessions, Orders)
+  → BACHs checkout_url
+  → POST /webhook (paid)
+```
+
+## Demo messages
 
 | Message | Response |
 |---------|----------|
-| "I need tomatoes" | Vendor list |
-| "I want to sell" | Vendor signup |
-| "Jumia Foods, rice 50kg, ₦30000, Lagos" | Registration |
-| Reply "1" | Select vendor #1 |
-| "yes" (after signup) | Continue registration |
+| `I need tomatoes` / `rice in Ikorodu` | Vendor list |
+| `I want to sell` | Vendor onboarding |
+| Reply `1` | Select vendor #1 |
+| Payment link | BACHs checkout |
 
----
+## Warnings
 
-## Storage
-
-Auth saved to `baileys_auth/` folder - keeps you logged in.
-
----
-
-## ⚠️ WARNINGS
-
-- **One number per bot** - use a spare WhatsApp if you have one
-- **Rate limits** - WhatsApp can ban for spam
-- **Demo only** - Don't use your main business number
+- Prefer a **spare** WhatsApp number
+- WhatsApp may restrict spammy accounts
+- Do not commit `.env` or `baileys_auth/`
+- Serverless-only hosts cannot keep the Baileys socket reliably online

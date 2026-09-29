@@ -139,6 +139,21 @@ async function initBaileySocket(onMessageReceived) {
     // Extract text from message
     const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text || '';
     
+    // Check for interactive responses (buttons/lists)
+    const hasInteractive = !!(
+      msg.message?.buttonsResponseMessage || 
+      msg.message?.listResponseMessage || 
+      msg.message?.templateButtonReplyMessage
+    );
+    
+    if (hasInteractive) {
+      console.log('[BAILEYS] 🎯 Interactive response detected:', JSON.stringify({
+        buttons: msg.message?.buttonsResponseMessage,
+        list: msg.message?.listResponseMessage,
+        template: msg.message?.templateButtonReplyMessage
+      }, null, 2).substring(0, 500));
+    }
+    
     // IMPORTANT: Use the actual remoteJid (could be @lid or @s.whatsapp.net)
     const fullJid = msg.key.remoteJid;
     const phoneNumber = fullJid.replace(/[@].*/, '').replace(/^\d+:/, '');
@@ -244,6 +259,7 @@ async function sendQuickReplies(to, body, options, title = '') {
 
 // WhatsApp Interactive: Button Message
 // Use case: Yes/No, Confirm/Cancel, Quick actions
+// IMPORTANT: Buttons require WhatsApp Business API or specific device support
 async function sendButtonMessage(to, body, buttons) {
   if (!sock) {
     console.error('[BAILEYS] Cannot send buttons - socket not ready');
@@ -256,27 +272,25 @@ async function sendButtonMessage(to, body, buttons) {
   }
 
   try {
-    // Format buttons for Baileys (native reply buttons)
-    // Note: Baileys uses templateButtons for better compatibility
+    // Baileys uses buttons property for native button messages
+    // Note: buttons may not display on all devices (iOS/Desktop often don't support)
     const buttonsList = buttons.slice(0, 3).map((btn, i) => ({
-      index: i,
-      quickReplyButton: {
-        displayText: btn.text.slice(0, 20), // WhatsApp limit
-        id: btn.id || `btn_${i}`
-      }
+      buttonId: btn.id || `btn_${i}`,
+      buttonText: { displayText: btn.text.slice(0, 20) }, // WhatsApp limit: 20 chars
+      type: 1 // Quick reply button
     }));
 
     const result = await sock.sendMessage(jid, {
       text: body,
-      templateButtons: buttonsList,
-      footer: 'GoToMart'
+      buttons: buttonsList,
+      headerType: 1
     });
 
     console.log('[BAILEYS] ✓ Button message sent - ID:', result.key.id);
     return result;
   } catch (err) {
     console.error('[BAILEYS] Button message failed:', err.message);
-    // Fallback to plain text
+    // Fallback to plain text with numbered options
     const fallback = `${body}\n\n${buttons.map((b, i) => `${i + 1}. ${b.text}`).join('\n')}`;
     return sendText(to, fallback);
   }
@@ -284,6 +298,7 @@ async function sendButtonMessage(to, body, buttons) {
 
 // WhatsApp Interactive: List Message
 // Use case: Vendor selection, menu items, multiple choices
+// NOTE: List messages work on most devices but require WhatsApp Business API on some
 async function sendListMessage(to, title, body, sections) {
   if (!sock) {
     console.error('[BAILEYS] Cannot send list - socket not ready');
@@ -297,22 +312,23 @@ async function sendListMessage(to, title, body, sections) {
 
   try {
     // Format sections for Baileys native list message
-    // Note: Baileys uses listMessage structure
+    // Baileys uses 'list' property with sections inside
     const formattedSections = sections.map((section, idx) => ({
-      title: section.title || 'Options',
-      rows: (section.options || []).slice(0, 10).map((opt, i) => ({
+      title: (section.title || 'Options').slice(0, 24),
+      rows: (section.options || section.items || []).slice(0, 10).map((opt, i) => ({
         title: (opt.text || opt.title || 'Option').slice(0, 24), // WhatsApp limit
         rowId: opt.id || `row_${idx}_${i}`,
         description: (opt.description || opt.desc || '').slice(0, 72) // WhatsApp limit
       }))
     }));
 
+    // Baileys uses 'list' property for list messages
     const result = await sock.sendMessage(jid, {
-      listMessage: {
+      list: {
         title: (title || 'GoToMart').slice(0, 60),
         description: body.slice(0, 4096), // WhatsApp limit
         buttonText: 'Select',
-        footerText: 'Tap to choose',
+        footer: 'Tap to choose',
         sections: formattedSections
       }
     });
@@ -321,12 +337,15 @@ async function sendListMessage(to, title, body, sections) {
     return result;
   } catch (err) {
     console.error('[BAILEYS] List message failed:', err.message);
+    console.error('[BAILEYS] Error details:', err.stack);
     // Fallback to plain text with numbered options
-    let fallback = `${title}\n\n${body}\n\n`;
+    let fallback = `*${title}*\n\n${body}\n\n`;
     sections.forEach((s, si) => {
-      (s.options || []).forEach((opt, i) => {
-        fallback += `${si + 1}.${i + 1}. ${opt.text}${opt.description ? ` - ${opt.description}` : ''}\n`;
+      fallback += `*${s.title || 'Options'}*\n`;
+      (s.options || s.items || []).forEach((opt, i) => {
+        fallback += `${i + 1}. ${opt.text || opt.title}${opt.description ? ` - ${opt.description}` : ''}\n`;
       });
+      fallback += '\n';
     });
     return sendText(to, fallback);
   }
@@ -335,19 +354,18 @@ async function sendListMessage(to, title, body, sections) {
 // Send vendor list as interactive list
 async function sendVendorListInteractive(to, intent, vendorOrderPairs) {
   const sections = [{
-    title: `Vendors for ${intent.quantity || ''} ${intent.item}`.trim(),
-    index: 0,
+    title: `Vendors (${vendorOrderPairs.length})`,
     options: vendorOrderPairs.map(({ vendor, reference }, i) => ({
       id: reference,
-      text: `${vendor.name}`,
-      description: `₦${vendor.price?.toLocaleString()} • ${vendor.location}${vendor.verified ? ' ✅' : ''}`
+      text: `${vendor.name}`.slice(0, 24),
+      description: `₦${vendor.price?.toLocaleString()}, ${vendor.location}${vendor.verified ? ' ✅' : ''}`.slice(0, 72)
     }))
   }];
 
   return sendListMessage(
     to,
-    '🛒 GoToMart Vendors',
-    `Found ${vendorOrderPairs.length} vendors${intent.location ? ` in ${intent.location}` : ''}. Tap to select:`,
+    '🛒 Available Vendors',
+    `Found ${vendorOrderPairs.length} vendors${intent.location ? ` in ${intent.location}` : ''}. Tap an item to select:`,
     sections
   );
 }
@@ -368,12 +386,14 @@ async function sendOrderConfirmation(to, vendor, intent, reference) {
 // Send onboarding welcome with buttons
 async function sendOnboardingWelcome(to) {
   const buttons = [
-    { id: 'start_selling', text: 'Start Selling' },
-    { id: 'learn_more', text: 'Learn More' },
-    { id: 'talk_to_human', text: 'Talk to Human' }
+    { id: 'start_selling', text: '✅ Start Selling' },
+    { id: 'learn_more', text: '📖 Learn More' },
+    { id: 'talk_to_human', text: '👤 Talk to Human' }
   ];
 
-  const body = `Welcome to GoToMart! 🛒\n\nWould you like to become a vendor and sell your products to thousands of buyers?`;
+  const body = `Welcome to *GoToMart*! 🛒
+
+Would you like to become a vendor and sell your products to thousands of buyers?`;
 
   return sendButtonMessage(to, body, buttons);
 }

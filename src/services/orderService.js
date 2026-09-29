@@ -18,49 +18,27 @@ function headers() {
  * Item, Quantity, Price, Pin, Status ("pending"|"paid")
  */
 async function createOrder(order) {
-  // Map JS field names to Airtable field names
+  // Airtable Orders fields (verified):
+  // Reference, BuyerPhone, VendorId, VendorPhone, Item, Quantity (text), Price, Pin, Status
+  // Quantity must be a string (e.g. "1 bag", "50kg"), not a number.
   const fields = {
     Reference: order.Reference,
     BuyerPhone: order.BuyerPhone,
-    'Vendor_ID': order.VendorId,       // Airtable uses Vendor_ID with underscore
-    'Vendor_UID': order.VendorId,      // Try Vendor_UID if that exists
-    'Vendor ID': order.VendorId,     // Or with space
+    VendorId: order.VendorId,
     VendorPhone: order.VendorPhone,
     Item: order.Item,
-    Quantity: order.Quantity,
+    Quantity: order.Quantity == null ? undefined : String(order.Quantity),
     Price: order.Price,
-    Pin: order.Pin,
-    Status: order.Status
+    Pin: order.Pin == null ? undefined : String(order.Pin),
+    Status: order.Status || 'pending'
   };
-  
-  // Try creating with common field name variations
-  const attempts = [
-    { ...fields, 'Vendor_ID': order.VendorId },
-    { ...fields, 'Vendor_UID': order.VendorId },
-    { ...fields, 'VendorId': order.VendorId },
-    { Reference: order.Reference, BuyerPhone: order.BuyerPhone, VendorPhone: order.VendorPhone, Item: order.Item, Quantity: order.Quantity, Price: order.Price, Pin: order.Pin, Status: order.Status }
-  ];
-  
-  let lastError;
-  for (const attemptFields of attempts) {
-    try {
-      // Remove undefined values
-      const cleanFields = Object.fromEntries(
-        Object.entries(attemptFields).filter(([_, v]) => v !== undefined)
-      );
-      const { data } = await axios.post(baseUrl(), { fields: cleanFields }, { headers: headers() });
-      return data;
-    } catch (err) {
-      lastError = err;
-      // If it's a field name error, try next
-      if (err.response?.data?.error?.message?.includes('Unknown field name')) {
-        console.log('[AIRTABLE] Field error, trying alternative:', err.response.data.error.message);
-        continue;
-      }
-      throw err;
-    }
-  }
-  throw lastError;
+
+  const cleanFields = Object.fromEntries(
+    Object.entries(fields).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+  );
+
+  const { data } = await axios.post(baseUrl(), { fields: cleanFields }, { headers: headers() });
+  return data;
 }
 
 async function getOrderByReference(reference) {
@@ -80,22 +58,16 @@ async function getOrdersByPhone(phone) {
   // Normalize phone number - extract just the digits from JID format
   const normalizedPhone = phone.replace(/[@].*$/, '').replace(/^\d+:/, '');
   
-  // Get recent orders (last 10)
+  // Query by BuyerPhone using filterByFormula
   const { data } = await axios.get(baseUrl(), {
     headers: headers(),
     params: { 
-      sort: [{ field: 'CreatedTime', direction: 'desc' }], 
+      filterByFormula: `FIND("${normalizedPhone}", {BuyerPhone})`,
       maxRecords: 10 
     }
   });
   
-  // Filter client-side for partial phone matching
-  return data.records
-    .filter(record => {
-      const recordPhone = record.fields.BuyerPhone || '';
-      return recordPhone.includes(normalizedPhone) || normalizedPhone.includes(recordPhone.replace(/[@].*$/, ''));
-    })
-    .map(record => ({ id: record.id, ...record.fields }));
+  return data.records.map(record => ({ id: record.id, ...record.fields }));
 }
 
 module.exports = { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone };

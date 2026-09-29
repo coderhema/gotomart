@@ -47,6 +47,28 @@ const {
   STATES
 } = require('./conversationService');
 
+// Commerce Engine (Seamless BUY/SELL State Machine)
+const {
+  CommerceStates,
+  CommerceStateMachine,
+  CommerceEngine,
+  commerceEngine
+} = require('./commerceEngine');
+
+// Product Intelligence (Tinyfish-powered)
+const { enrichProduct, isKnownProduct, getProductCategory } = require('./productIntelligence');
+const { containsProductReference, detectCategory } = require('./productPatterns');
+const { checkAndEnrichProduct, getProductInfo } = require('./enhancedRouter');
+
+// Tinyfish Search
+const {
+  searchWeb,
+  fetchContent,
+  searchProductPrices,
+  searchCompetitors,
+  getMarketTrends
+} = require('./tinyfishService');
+
 /**
  * Re-export all WhatsApp messaging functions
  *
@@ -96,6 +118,28 @@ module.exports = {
   TOPICS,
   STATES,
 
+  // Commerce Engine (Seamless BUY/SELL)
+  CommerceStates,
+  CommerceStateMachine,
+  CommerceEngine,
+  commerceEngine,
+
   // Legacy: sendTextEnhanced (same as sendText, for backward compatibility)
-  sendTextEnhanced
+  sendTextEnhanced,
+
+  // Product Intelligence & Patterns
+  enrichProduct,
+  isKnownProduct,
+  getProductCategory,
+  containsProductReference,
+  detectCategory,
+  checkAndEnrichProduct,
+  getProductInfo,
+
+  // Tinyfish Search
+  searchWeb,
+  fetchContent,
+  searchProductPrices,
+  searchCompetitors,
+  getMarketTrends
 };

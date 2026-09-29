@@ -3,7 +3,7 @@ const express = require('express');
 const crypto = require('crypto');
 const path = require('path');
 
-const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
+const { parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
 const { sendText, sendVendorList, initBaileySocket, sendVendorListInteractive, sendButtonMessage, sendOnboardingWelcome } = require('./services/twilioService');
 
@@ -25,7 +25,15 @@ const {
 
 // TINYFISH Search Integration
 const { searchProductPrices, getMarketTrends, formatSearchResultsForWhatsApp } = require('./services/tinyfishService');
-const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
+// Payment Service (Bachs)
+const {
+  createPaymentLink,
+  verifyWebhookSignature,
+  parseWebhookEvent,
+  isSuccessfulPayment,
+  createPayout,
+  WebhookEvents
+} = require('./services/paymentService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
 const { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone } = require('./services/orderService');
@@ -52,6 +60,55 @@ const app = express();
 // the exact raw bytes, not the re-serialized JSON.
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
+// --- Health check ---
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'GoToMart', timestamp: new Date().toISOString() });
+});
+
+// --- Webhook verification (for Bachs/Meta/Twilio) ---
+app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  
+  // Meta webhook verification
+  if (mode === 'subscribe' && token === process.env.META_VERIFY_TOKEN) {
+    console.log('[WEBHOOK] Meta verification successful');
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+// --- Bachs payment webhook ---
+app.post('/webhook', (req, res) => {
+  const signature = req.headers['x-bachs-signature'] || req.headers['x-webhook-signature'];
+  
+  if (!signature) {
+    console.log('[WEBHOOK] Warning: No signature header');
+  } else if (!verifyWebhookSignature(req.rawBody, signature)) {
+    console.log('[WEBHOOK] Signature verification failed');
+    return res.sendStatus(401);
+  }
+  
+  // Acknowledge immediately
+  res.sendStatus(200);
+  
+  // Process async
+  try {
+    const event = parseWebhookEvent(req.body);
+    console.log('[WEBHOOK] Event:', event.type, event.reference);
+    
+    if (isSuccessfulPayment(event)) {
+      processSuccessfulPayment(event).catch(err => {
+        console.error('[WEBHOOK] Payment processing error:', err.message);
+      });
+    }
+  } catch (err) {
+    console.error('[WEBHOOK] Parse error:', err.message);
+  }
+});
+
 // --- Inbound WhatsApp messages ---
 // No webhook endpoint needed - Baileys uses direct WebSocket connection
 
@@ -71,7 +128,8 @@ const AGENT_PERSONA = {
   ],
   
   fallback: [
-    "I didn't quite catch that. Try:\n• \"I need rice\"\n• \"Find beans in Lagos\"\n• \"I want to sell garri\"\n\nOr type 'help' for more options."
+    "I didn't quite catch that. Try:\n• \"I need rice\"\n• \"Find beans in Lagos\"\n• \"I want to sell garri\"\n\nOr type 'help' for more options.",
+    "Hmm, I'm not sure what you mean. You can:\n🛒 Say what you want to buy\n🏪 Tell me what you want to sell\n📦 Ask about your orders\n❓ Type 'help' for assistance"
   ],
   
   thinking: [
@@ -127,10 +185,45 @@ async function handleInteractiveResponse(from, interaction, session) {
     return await handleMenuAction(from, action, session);
   }
 
-  // Payment buttons
+// Payment buttons (legacy style)
   if (ComponentIds.hasPrefix(id, ComponentIds.PAY)) {
     const reference = id.replace(/^pay_/, '');
     await handleVendorSelection(from, reference);
+    return true;
+  }
+
+  // WhatsApp-native payment method selection
+  if (id.startsWith('pay_card_')) {
+    const orderRef = id.replace('pay_card_', '');
+    await handlePaymentMethodSelection(from, 'card', orderRef);
+    // Store in session
+    await setSession(from, { ...session, orderRef, paymentStep: 'card' });
+    return true;
+  }
+  if (id.startsWith('pay_transfer_')) {
+    const orderRef = id.replace('pay_transfer_', '');
+    await handlePaymentMethodSelection(from, 'bank_transfer', orderRef);
+    await setSession(from, { ...session, orderRef, paymentStep: 'transfer' });
+    return true;
+  }
+  if (id.startsWith('pay_ussd_')) {
+    const orderRef = id.replace('pay_ussd_', '');
+    await handlePaymentMethodSelection(from, 'ussd', orderRef);
+    await setSession(from, { ...session, orderRef, paymentStep: 'ussd' });
+    return true;
+  }
+  
+  // Transfer/USSD confirmation
+  if (id.startsWith('confirm_transfer_') || id.startsWith('confirm_ussd_')) {
+    const orderRef = id.includes('transfer') ? id.replace('confirm_transfer_', '') : id.replace('confirm_ussd_', '');
+    await handleTransferConfirmation(from, orderRef);
+    return true;
+  }
+  
+  // Cancel payment
+  if (id.startsWith('cancel_payment_')) {
+    await sendText(from, '❌ Payment cancelled. What else can I help you with?');
+    await clearSession(session);
     return true;
   }
 
@@ -194,11 +287,23 @@ async function handleTextMessage(from, message, fullMessage = null) {
   const session = await getSession(from);
   const text = typeof message === 'string' ? message : message.text;
 
-  // STEP 0: Check if this is an interactive response (button/list click)
+// STEP 0: Check if this is an interactive response (button/list click)
   if (fullMessage) {
-    const interaction = parseInteractiveResponse(fullMessage);
+    // Try parsing from fullMessage.message first, then fullMessage itself
+    const messageContent = fullMessage.message || fullMessage;
+    const interaction = parseInteractiveResponse(messageContent);
     if (interaction) {
+      console.log('[INTERACTIVE] Parsed interaction:', JSON.stringify(interaction));
       return await handleInteractiveResponse(from, interaction, session);
+    }
+  }
+
+  // STEP 0.1: Check if user is in a payment flow (collecting card/bank details)
+  if (session?.orderRef) {
+    const handled = await routePaymentMessage(from, text, session);
+    if (handled) {
+      console.log('[PAYMENT] Message routed to payment handler');
+      return;
     }
   }
 
@@ -285,11 +390,35 @@ async function handleDecisionResponse(from, decision, responseFn, responseType) 
 
 /**
  * Handle numeric vendor selection
+ * Uses session-stored vendors from last search
  */
-async function handleNumericSelection(from, text) {
+async function handleNumericSelection(from, text, session) {
   try {
-    const recentOrders = await getOrdersByPhone(from);
     const index = parseInt(text) - 1;
+    
+    // Check if we have recent vendor results in session
+    if (session?.lastVendors && session.lastVendors[index]) {
+      const vendor = session.lastVendors[index];
+      // Create order for this vendor
+      const reference = crypto.randomUUID();
+      await createOrder({
+        Reference: reference,
+        BuyerPhone: from,
+        VendorId: vendor.id,
+        VendorPhone: vendor.phone,
+        Item: session.lastIntent?.item || 'product',
+        Quantity: session.lastIntent?.quantity || '',
+        Price: vendor.price,
+        Pin: generatePin(),
+        Status: 'pending'
+      });
+      
+      await handleVendorSelection(from, reference);
+      return true;
+    }
+    
+    // Fallback: try orders
+    const recentOrders = await getOrdersByPhone(from);
     if (recentOrders[index]) {
       await handleVendorSelection(from, recentOrders[index].Reference);
       return true;
@@ -392,56 +521,71 @@ async function handleTextQuery(from, text, decision = null) {
   // If we have decision context, use it for logging
   try {
     // Use enhanced error handling wrapper for intent parsing
-    const intent = await withEnhancedErrorHandling(
-      () => parseIntent(text),
+    const result = await withEnhancedErrorHandling(
+      () => parseUserIntent(text),
       { from, text, stage: 'intent_parsing' }
     );
 
-    if (!intent || !intent.item) {
-      await sendText(from, "Sorry, I couldn't understand that. Try something like: \"I need a 50kg bag of rice in Ikorodu\".");
-      return;
-    }
+    console.log('[PARSE_RESULT]', JSON.stringify(result));
 
-    // Use enhanced error handling wrapper for vendor search
-    const vendors = await withEnhancedErrorHandling(
-      () => findVendors(intent),
-      { from, intent, stage: 'vendor_search' }
-    );
-
-    if (!vendors.length) {
-      await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
-      return;
-    }
-
-    const vendorOrderPairs = [];
-    for (const vendor of vendors) {
-      const reference = crypto.randomUUID();
+    // Handle different intents
+    if (result.intent === 'BUY' && result.item) {
+      const intent = {
+        item: result.item,
+        quantity: result.quantity,
+        location: result.location
+      };
       
-      // Use enhanced error handling wrapper for order creation
-      await withEnhancedErrorHandling(
-        () => createOrder({
-          Reference: reference,
-          BuyerPhone: from,
-          VendorId: vendor.id,
-          VendorPhone: vendor.phone,
-          Item: intent.item,
-          Quantity: intent.quantity,
-          Price: vendor.price,
-          Pin: generatePin(),
-          Status: 'pending'
-        }),
-        { from, vendor, intent, stage: 'order_creation' }
+      // Use enhanced error handling wrapper for vendor search
+      const vendors = await withEnhancedErrorHandling(
+        () => findVendors(intent),
+        { from, intent, stage: 'vendor_search' }
       );
-      vendorOrderPairs.push({ vendor, reference });
-    }
 
-    // Use enhanced error handling wrapper for vendor list sending
-    // Send interactive vendor list
-    const vendorsList = ListMessage.vendorSelection(vendorOrderPairs, intent);
-    await withEnhancedErrorHandling(
-      () => vendorsList.send(from),
-      { from, vendorCount: vendors.length, stage: 'send_vendor_list_interactive' }
-    );
+      if (!vendors.length) {
+        await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
+        return;
+      }
+
+      const vendorOrderPairs = [];
+      for (const vendor of vendors) {
+        const reference = crypto.randomUUID();
+        
+        // Use enhanced error handling wrapper for order creation
+        await withEnhancedErrorHandling(
+          () => createOrder({
+            Reference: reference,
+            BuyerPhone: from,
+            VendorId: vendor.id,
+            VendorPhone: vendor.phone,
+            Item: intent.item,
+            Quantity: intent.quantity,
+            Price: vendor.price,
+            Pin: generatePin(),
+            Status: 'pending'
+          }),
+          { from, vendor, intent, stage: 'order_creation' }
+        );
+        vendorOrderPairs.push({ vendor, reference });
+      }
+
+      // Use enhanced error handling wrapper for vendor list sending
+      // Send interactive vendor list
+      const vendorsList = ListMessage.vendorSelection(vendorOrderPairs, intent);
+      await withEnhancedErrorHandling(
+        () => vendorsList.send(from),
+        { from, vendorCount: vendors.length, stage: 'send_vendor_list_interactive' }
+      );
+      
+    } else if (result.intent === 'SELL') {
+      // Handle sell intent
+      const session = await getSession(from);
+      await sendOnboardingWelcome(from);
+      
+    } else if (result.intent === 'UNKNOWN' || !result.item) {
+      // Unknown intent - try Cerebras for better understanding
+      await sendText(from, "I'm not sure what you're looking for. Try:\n• \"I need 50kg rice in Lagos\"\n• \"I want to sell beans for ₦45,000\"\n• \"Show my orders\"\n\nOr type 'help' for options.");
+    }
     
   } catch (err) {
     const errorType = categorizeError(err);
@@ -576,7 +720,7 @@ async function handleDirectResponse(from, text, decision, session) {
       return handleOrderStatus(from, session);
     
     case INTENT_TYPES.VENDOR_SELECTION:
-      await handleNumericSelection(from, text.trim());
+      await handleNumericSelection(from, text.trim(), session);
       return;
     
     default:
@@ -601,23 +745,33 @@ async function handleCerebrasResponse(from, text, decision, cerebrasResult, sess
   console.log('[CEREBRAS_RESULT]', JSON.stringify({ intent, item, quantity, location }));
   
   // Route based on Cerebras intent
-  if (intent === 'BUY' || decision.intent === INTENT_TYPES.BUY) {
+  const detectedIntent = (intent || decision.intent || '').toUpperCase();
+  
+  if (detectedIntent === 'BUY' || detectedIntent === INTENT_TYPES.BUY) {
     if (item) {
       const buyIntent = { item, quantity, location };
       return handleFastBuy(from, buyIntent, decision);
     } else {
-      await sendText(from, "I couldn't understand what you're looking for. Try: 'I need 50kg rice in Lagos'");
+      // Missing item detail - ask for clarification
+      await sendText(from, "I see you're looking to buy something, but I need more details.\n\nTry: 'I need 50kg rice in Lagos' or 'Find tomatoes in Yaba'");
       return;
     }
   }
   
-  if (intent === 'SELL' || decision.intent === INTENT_TYPES.SELL) {
-    const aiDecision = { item, price, location, shopName };
-    return startVendorOnboarding(session, from, aiDecision);
+  if (detectedIntent === 'SELL' || detectedIntent === INTENT_TYPES.SELL) {
+    if (item && price) {
+      const aiDecision = { item, price, location, shopName };
+      return startVendorOnboarding(session, from, aiDecision);
+    } else {
+      // Missing sell details
+      await sendText(from, "I see you want to sell something! Tell me:\n• What item?\n• Your price\n• Your location\n\nExample: 'I sell rice for ₦45,000 in Ikorodu'");
+      return;
+    }
   }
   
-  // Fallback for unrecognized
-  await sendAgentResponse(from, 'fallback');
+  // Fallback for unrecognized - provide helpful options
+  await sendText(from, "I'm not sure what you need. Here are some things I can help with:\n\n🛒 *Buy:* \"I need 50kg rice\"\n🏪 *Sell:* \"I want to sell beans\"\n📦 *Orders:* \"Show my orders\"\n❓ *Help:* \"What can you do?\"");
+  await ListMessage.mainMenu().send(from);
 }
 
 /**
@@ -643,6 +797,15 @@ async function handleFastBuy(from, intent, decision) {
       await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
       return;
     }
+
+    // Store vendors in session for numeric selection
+    const session = await getSession(from);
+    await setSession({ 
+      ...session, 
+      lastVendors: vendors,
+      lastIntent: intent,
+      vendorSearchTime: Date.now()
+    });
 
     const vendorOrderPairs = [];
     for (const vendor of vendors) {
@@ -791,30 +954,97 @@ async function continueVendorOnboarding(session, text) {
   }
 }
 
-// --- Paystack payment webhook ---
+// --- Paystack/Bachs payment webhook (legacy route) ---
 app.post('/paystack/webhook', (req, res) => {
-  const signature = req.headers['x-paystack-signature'];
+  console.log('[WEBHOOK] Paystack webhook received, redirecting to Bachs handler');
+  
+  // Try Bachs signature first, fall back to legacy
+  const signature = req.headers['x-bachs-signature'] || req.headers['x-webhook-signature'] || req.headers['x-paystack-signature'];
+  
   if (!verifyWebhookSignature(req.rawBody, signature)) {
+    console.log('[WEBHOOK] Signature verification failed');
     return res.sendStatus(401);
   }
 
-  res.sendStatus(200); // ack immediately, process async
+  res.sendStatus(200);
   
-  // Enhanced error handling for webhook processing
-  handlePaystackEvent(req.body).catch(err => {
+  // Handle as Bachs event
+  handleBachsEvent(req.body).catch(err => {
     const errorType = categorizeError(err);
     logError(err, {
       webhookEvent: req.body,
       errorType,
-      stage: 'paystack_webhook',
+      stage: 'paystack_bachs_webhook',
       timestamp: new Date().toISOString()
     });
-    
-    // Note: No user message sent for webhook errors
-    // Webhook failures are logged but not sent to users
   });
 });
 
+async function handleBachsEvent(event) {
+  try {
+    const eventType = event.event || event.data?.status;
+    
+    if (!eventType?.includes('success') && eventType !== 'checkout.completed') {
+      console.log('[BACHS] Ignoring event:', eventType);
+      return;
+    }
+    
+    const reference = event.data?.reference || event.data?.metadata?.reference;
+    if (!reference) {
+      console.error('[BACHS] No reference in webhook');
+      return;
+    }
+    
+    console.log('[BACHS] Processing payment for:', reference);
+    
+    // Get order
+    const order = await withEnhancedErrorHandling(
+      () => getOrderByReference(reference),
+      { reference, event, stage: 'bachs_order_retrieval' }
+    );
+    
+    if (!order || order.Status === 'paid') {
+      console.log('[BACHS] Order already paid or not found');
+      return;
+    }
+    
+    // Mark order as paid
+    await withEnhancedErrorHandling(
+      () => markOrderPaid(order.id),
+      { order, stage: 'bachs_mark_paid' }
+    );
+    
+    // Notify buyer
+    await withEnhancedErrorHandling(
+      () => sendText(order.BuyerPhone, `Payment confirmed! Your PIN is ${order.Pin}. Show this to the vendor to confirm handover.`),
+      { order, stage: 'bachs_notify_buyer' }
+    );
+    
+    // Notify vendor
+    await withEnhancedErrorHandling(
+      () => sendText(order.VendorPhone, `You've received ₦${Number(order.Price).toLocaleString()} for ${order.Item}. Contact the buyer at ${order.BuyerPhone} to arrange delivery — PIN ${order.Pin}`),
+      { order, stage: 'bachs_notify_vendor' }
+    );
+    
+    // Payout to vendor
+    const bankDetails = order.BankDetails || order.VendorBankDetails;
+    if (bankDetails) {
+      try {
+        const amount = String(Math.floor(Number(order.Price) * 0.95)); // 5% platform fee
+        await payoutToVendor(amount, bankDetails, reference);
+        console.log('[BACHS] Payout initiated for vendor');
+      } catch (err) {
+        console.error('[BACHS] Payout failed:', err.message);
+      }
+    }
+    
+  } catch (err) {
+    logError(err, { event, stage: 'handleBachsEvent', timestamp: new Date().toISOString() });
+    throw err;
+  }
+}
+
+// Legacy Paystack handler (deprecated, use handleBachsEvent)
 async function handlePaystackEvent(event) {
   try {
     if (event.event !== 'charge.success') return;

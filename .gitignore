@@ -69,3 +69,7 @@ package-lock.json
 
 # Bachs webhook secrets
 bachs_webhook.secret
+
+# Baileys WhatsApp session (do not commit credentials)
+baileys_auth/
+

@@ -6,6 +6,8 @@
  */
 
 const { parseUserIntent } = require('./cerebrasService');
+const { containsProductReference, detectCategory } = require('./productPatterns');
+const { enrichProduct, isKnownProduct } = require('./productIntelligence');
 
 // ============================================
 // DECISION PRIMITIVES (Jev's three types)
@@ -95,11 +97,13 @@ const INTENT_PATTERNS = {
 function scoreMessage(text) {
   const scores = {};
   
-  // Clarity score
+  // Clarity score - using expanded product patterns
   let clarity = 0;
-  if (/\b(rice|beans|garri|tomatoes|oil|flour|sugar|yam|plantain|meat|fish|chicken|eggs)\b/i.test(text)) {
+  if (containsProductReference(text)) {
     clarity = 0.7;
-    if (/\d+kg/.test(text) || /\bin\s+\w+/.test(text) || /for\s*₦?\d+/.test(text)) {
+    if (/\d+\s*(kg|g|bag|bottle|litre|unit|piece|pack|pair|set)/i.test(text) || 
+        /\bin\s+\w+/.test(text) || 
+        /for\s*₦?\d+/.test(text)) {
       clarity = 1.0;
     }
   }
@@ -122,11 +126,12 @@ function scoreMessage(text) {
 const validationChecks = {
   hasPrice: (text) => /₦?\d{3,}/.test(text) || /\d+\s*(naira|ngn|₦)/i.test(text),
   hasLocation: (text) => /\b(in|at|around)\s+([A-Z][a-z]+)/i.test(text),
-  hasQuantity: (text) => /\b(\d+\s*(kg|g|bags?|crates?|litres?))\b/i.test(text),
+  hasQuantity: (text) => /\b(\d+\s*(kg|g|bags?|crates?|litres?|bottles?|boxes?|packs?|pairs?|sets?|pieces?))\b/i.test(text),
   isGreeting: (text) => /^(hi|hello|hey|yo)\b/i.test(text.trim()),
-  isHelpRequest: (text) => /\b(help|what can you do)\b/i.test(text),
-  isSimpleBuy: (text) => /\b(need|want|looking for)\b.*\b(rice|beans|garri)\b/i.test(text),
-  isVendorIntent: (text) => /\b(sell|become a vendor|list my)\b/i.test(text)
+  isHelpRequest: (text) => /\b(help|what can you do|what do you sell)\b/i.test(text),
+  isSimpleBuy: (text) => /\b(need|want|looking for|find me|help me get|buy)\b/i.test(text) && containsProductReference(text),
+  isVendorIntent: (text) => /\b(sell|become a vendor|list my|add my (shop|business|store))\b/i.test(text),
+  hasProduct: (text) => containsProductReference(text)
 };
 
 function validateMessage(text) {

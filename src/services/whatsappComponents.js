@@ -276,12 +276,12 @@ class ListMessage {
       throw new Error(`ListMessage validation failed: ${validation.errors.join(', ')}`);
     }
 
+    // Format for Baileys sendListMessage
     const formattedSections = this.sections.map(section => ({
-      title: section.title,
-      index: 0,
+      title: section.title || 'Options',
       options: section.options.map(opt => ({
         id: opt.id,
-        text: opt.text || opt.title,
+        text: opt.text || opt.title || 'Option',
         description: opt.description || opt.desc || ''
       }))
     }));
@@ -411,38 +411,74 @@ class ListMessageBuilder {
 
 /**
  * Parse interactive response from Baileys message
- * @param {Object} message - Baileys message object
+ * Handles multiple possible message structures from Baileys
+ * @param {Object} message - Baileys message object (from msg.message)
  * @returns {Object|null} Parsed response or null if not interactive
  */
 function parseInteractiveResponse(message) {
   if (!message) return null;
 
-  // Button response
-  if (message.buttonsResponseMessage) {
+  // Access the actual message content (could be nested)
+  const msgContent = message.message || message;
+
+  // Button response (from interactive buttons)
+  if (msgContent.buttonsResponseMessage) {
+    const btn = msgContent.buttonsResponseMessage;
     return {
       type: 'button',
-      buttonId: message.buttonsResponseMessage.selectedButtonId,
-      buttonText: message.buttonsResponseMessage.selectedDisplayText
+      buttonId: btn.selectedButtonId,
+      buttonText: btn.selectedDisplayText || btn.selectedButtonId
     };
   }
 
-  // List response
-  if (message.listResponseMessage) {
+  // List response (from list messages)
+  if (msgContent.listResponseMessage) {
+    const list = msgContent.listResponseMessage;
     return {
       type: 'list',
-      itemId: message.listResponseMessage.singleSelectReply?.selectedRowId,
-      itemTitle: message.listResponseMessage.title,
-      description: message.listResponseMessage.description
+      itemId: list.singleSelectReply?.selectedRowId || list.rowId,
+      itemTitle: list.title,
+      description: list.description
     };
   }
 
-  // Template button response (fallback)
-  if (message.templateButtonReplyMessage) {
+  // Template/Native button response (newer Baileys versions)
+  if (msgContent.templateButtonReplyMessage) {
+    const tmpl = msgContent.templateButtonReplyMessage;
     return {
       type: 'template',
-      buttonId: message.templateButtonReplyMessage.selectedId,
-      buttonText: message.templateButtonReplyMessage.selectedDisplayText
+      buttonId: tmpl.selectedId,
+      buttonText: tmpl.selectedDisplayText || tmpl.selectedId
     };
+  }
+
+  // Fallback: check for buttonId directly in message
+  if (msgContent.buttonId) {
+    return {
+      type: 'button',
+      buttonId: msgContent.buttonId,
+      buttonText: msgContent.buttonText || msgContent.buttonId
+    };
+  }
+
+  // Check for response context (some versions wrap differently)
+  if (msgContent.interactiveResponseMessage) {
+    const interactive = msgContent.interactiveResponseMessage;
+    if (interactive.buttonReplyMessage) {
+      return {
+        type: 'button',
+        buttonId: interactive.buttonReplyMessage.selectedButtonId,
+        buttonText: interactive.buttonReplyMessage.selectedDisplayText
+      };
+    }
+    if (interactive.listReplyMessage) {
+      return {
+        type: 'list',
+        itemId: interactive.listReplyMessage.selectedRowId,
+        itemTitle: interactive.listReplyMessage.title,
+        description: interactive.listReplyMessage.description
+      };
+    }
   }
 
   return null;

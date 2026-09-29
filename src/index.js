@@ -5,7 +5,7 @@ const path = require('path');
 
 const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
-const { sendText, sendVendorList, parseBaileysMessage, handleWebhookVerify, initBaileySocket, setMessageHandler } = require('./services/twilioService');
+const { sendText, sendVendorList, initBaileySocket } = require('./services/twilioService');
 const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
@@ -25,54 +25,74 @@ const app = express();
 // the exact raw bytes, not the re-serialized JSON.
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
-// --- Twilio/Meta webhook verification ---
-app.get('/webhook', handleWebhookVerify);
-
 // --- Inbound WhatsApp messages ---
-app.post('/webhook', (req, res) => {
-  res.sendStatus(200); // ack immediately, process async
+// No webhook endpoint needed - Baileys uses direct WebSocket connection
+
+// No webhook handler needed - Baileys receives messages directly
+
+// GoToMart Agent Persona
+const AGENT_NAME = 'GoToMart';
+const AGENT_PERSONA = {
+  greeting: [
+    "👋 Hello! I'm your GoToMart shopping assistant. I help you find vendors and get the best prices for items like rice, beans, garri, and more!\n\nWhat do you need today?",
+    "Hi there! 👋 Welcome to GoToMart - your AI marketplace assistant!\n\nI can help you:\n• Find vendors for items\n• Compare prices\n• Connect with sellers\n\nWhat are you looking for?",
+    "Hey! 🛒 I'm GoToMart, your personal shopping agent. Tell me what you need and I'll find the best vendors for you!"
+  ],
   
-  // Enhanced error handling for incoming messages
-  handleIncoming(req.body).catch(err => {
-    const errorType = categorizeError(err);
-    logError(err, {
-      body: req.body,
-      errorType,
-      stage: 'handleIncoming_outer',
-      timestamp: new Date().toISOString()
-    });
-    
-    // Note: No user message sent for top-level errors
-    // These are system errors that users shouldn't see
-  });
-});
+  help: [
+    "Here's what I can do:\n\n🛒 **Shopping**: \"I need 50kg rice in Lagos\"\n\n🏪 **Sell Items**: \"I want to sell beans\"\n\n🔄 **Select Vendor**: Reply with a number (1, 2, 3...)\n\n💳 **Pay**: Click the payment link I send\n\nWhat would you like to do?"
+  ],
+  
+  fallback: [
+    "I didn't quite catch that. Try:\n• \"I need rice\"\n• \"Find beans in Lagos\"\n• \"I want to sell garri\"\n\nOr type 'help' for more options."
+  ],
+  
+  thinking: [
+    "Let me find the best vendors for you... 🔍",
+    "Searching for great deals... 🛒",
+    "Looking up vendors in your area... 📍"
+  ]
+};
 
-async function handleIncoming(body) {
-  // Check if Twilio format (has Body and From)
-  if (body?.Body && body?.From) {
-    const parsed = parseTwilioMessage(body);
-    return handleTextMessage(parsed.from, parsed.text);
-  }
+// Check if message is a greeting
+function isGreeting(text) {
+  const greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'gm', 'how are you', 'what\'s up', 'yo', 'hola'];
+  const lower = text.toLowerCase().trim();
+  return greetings.some(g => lower.includes(g) || lower === g);
+}
 
-  // Meta/WhatsApp format
-  const value = body?.entry?.[0]?.changes?.[0]?.value;
-  const message = value?.messages?.[0];
-  if (!message) return;
+// Check if message is help request
+function isHelpRequest(text) {
+  const helpWords = ['help', 'what can you do', 'how does this work', 'options', 'commands', 'menu'];
+  return helpWords.some(word => text.toLowerCase().includes(word));
+}
 
-  const from = message.from;
+// Get random response from array
+function getRandomResponse(responses) {
+  return responses[Math.floor(Math.random() * responses.length)];
+}
 
-  if (message.type === 'interactive' && message.interactive?.type === 'list_reply') {
-    return handleVendorSelection(from, message.interactive.list_reply.id);
-  }
-
-  if (message.type !== 'text') return;
-
-  const text = message.text.body;
-  return handleTextMessage(from, text);
+// Get agent response
+async function sendAgentResponse(from, type) {
+  const response = getRandomResponse(AGENT_PERSONA[type]);
+  await sendText(from, response);
 }
 
 async function handleTextMessage(from, text) {
   const session = await getSession(from);
+  
+  // Handle greetings
+  if (isGreeting(text)) {
+    await sendAgentResponse(from, 'greeting');
+    return;
+  }
+  
+  // Handle help requests
+  if (isHelpRequest(text)) {
+    await sendAgentResponse(from, 'help');
+    return;
+  }
+  
   const isVendor = isVendorIntent(text) || text.toLowerCase().includes('sell') || text.toLowerCase().includes('vendor');
 
   if (session.state !== 'idle') {

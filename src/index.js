@@ -5,7 +5,26 @@ const path = require('path');
 
 const { parseIntent, parseVendorCatalog, parseUserIntent } = require('./services/cerebrasService');
 const { findVendors } = require('./services/airtableService');
-const { sendText, sendVendorList, initBaileySocket } = require('./services/twilioService');
+const { sendText, sendVendorList, initBaileySocket, sendVendorListInteractive, sendButtonMessage, sendOnboardingWelcome } = require('./services/twilioService');
+
+// Interactive WhatsApp Components
+const {
+  ButtonMessage,
+  ListMessage,
+  parseInteractiveResponse,
+  ComponentIds
+} = require('./services/whatsappComponents');
+
+// Conversation Router with NLP
+const {
+  routeConversation,
+  getContext: getConversationContext,
+  isReturningToTopic,
+  TOPICS
+} = require('./services/conversationService');
+
+// TINYFISH Search Integration
+const { searchProductPrices, getMarketTrends, formatSearchResultsForWhatsApp } = require('./services/tinyfishService');
 const { createCheckoutLink, verifyWebhookSignature } = require('./services/paystackService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
@@ -18,6 +37,14 @@ const {
   getUserFriendlyMessage,
   withEnhancedErrorHandling
 } = require('./utils/errors');
+
+// JEV + CEREBRAS Hybrid Decision Layer
+const {
+  makeDecision,
+  delegateToCerebras,
+  INTENT_TYPES,
+  THRESHOLDS
+} = require('./services/decisionService');
 
 const app = express();
 
@@ -78,50 +105,291 @@ async function sendAgentResponse(from, type) {
   await sendText(from, response);
 }
 
-async function handleTextMessage(from, text) {
+/**
+ * Handle interactive button/list responses
+ */
+async function handleInteractiveResponse(from, interaction, session) {
+  console.log('[INTERACTIVE]', interaction.type, interaction.itemId || interaction.buttonId);
+
+  const id = interaction.itemId || interaction.buttonId;
+  if (!id) return false;
+
+  // Vendor selection from list
+  if (ComponentIds.hasPrefix(id, ComponentIds.VENDOR_PREFIX)) {
+    const reference = id.replace(ComponentIds.VENDOR_PREFIX, '');
+    await handleVendorSelection(from, reference);
+    return true;
+  }
+
+  // Menu navigation
+  if (ComponentIds.hasPrefix(id, ComponentIds.MENU_PREFIX)) {
+    const action = id.replace(ComponentIds.MENU_PREFIX, '');
+    return await handleMenuAction(from, action, session);
+  }
+
+  // Payment buttons
+  if (ComponentIds.hasPrefix(id, ComponentIds.PAY)) {
+    const reference = id.replace(/^pay_/, '');
+    await handleVendorSelection(from, reference);
+    return true;
+  }
+
+  // Cancel button
+  if (id === ComponentIds.CANCEL) {
+    await sendText(from, '❌ Cancelled. What else can I help you with?');
+    await ListMessage.mainMenu().send(from);
+    return true;
+  }
+
+  // Confirmation buttons
+  if (id.includes('_yes') || id.includes('_no')) {
+    return await handleConfirmationResponse(from, id, session);
+  }
+
+  return false;
+}
+
+/**
+ * Handle menu actions from interactive list
+ */
+async function handleMenuAction(from, action, session) {
+  switch (action) {
+    case 'buy':
+      await sendText(from, 'What are you looking for? (Example: "50kg rice in Lagos")');
+      break;
+    case 'sell':
+      await sendOnboardingWelcome(from);
+      break;
+    case 'orders':
+      await handleOrderStatus(from, session);
+      break;
+    case 'help':
+      await sendAgentResponse(from, 'help');
+      break;
+    default:
+      await sendText(from, 'What would you like to do?');
+  }
+  return true;
+}
+
+/**
+ * Handle confirmation button responses (Yes/No)
+ */
+async function handleConfirmationResponse(from, buttonId, session) {
+  if (buttonId.includes('_yes')) {
+    // Extract the action from the button ID
+    const action = buttonId.split('_')[0];
+    await sendText(from, `✅ Confirmed: ${action}`);
+  } else if (buttonId.includes('_no')) {
+    await sendText(from, '❌ Got it. Is there something else I can help with?');
+    await ListMessage.mainMenu().send(from);
+  }
+  return true;
+}
+
+/**
+ * Main message handler - processes both text and interactive messages
+ */
+async function handleTextMessage(from, message, fullMessage = null) {
   const session = await getSession(from);
-  
-  // Handle greetings
-  if (isGreeting(text)) {
-    await sendAgentResponse(from, 'greeting');
-    return;
-  }
-  
-  // Handle help requests
-  if (isHelpRequest(text)) {
-    await sendAgentResponse(from, 'help');
-    return;
-  }
-  
-  const isVendor = isVendorIntent(text) || text.toLowerCase().includes('sell') || text.toLowerCase().includes('vendor');
+  const text = typeof message === 'string' ? message : message.text;
 
-  if (session.state !== 'idle') {
-    return continueVendorOnboarding(session, text);
-  }
-
-  if (isVendor) {
-    return startVendorOnboarding(session, from);
-  }
-
-  // Handle numbered vendor selection for Twilio
-  if (/^[1-9]\d*$/.test(text.trim())) {
-    try {
-      const recentOrders = await getOrdersByPhone(from);
-      const index = parseInt(text.trim()) - 1;
-      if (recentOrders[index]) {
-        return handleVendorSelection(from, recentOrders[index].Reference);
-      }
-    } catch (e) {
-      console.error('Error fetching recent orders:', e);
+  // STEP 0: Check if this is an interactive response (button/list click)
+  if (fullMessage) {
+    const interaction = parseInteractiveResponse(fullMessage);
+    if (interaction) {
+      return await handleInteractiveResponse(from, interaction, session);
     }
   }
 
-  return handleTextQuery(from, text);
+  // STEP 0.5: Check if user is returning to topic after off-topic
+  if (isReturningToTopic(text)) {
+    const convContext = getConversationContext(from);
+    const inProgress = convContext.getInProgressBuyingIntent();
+    if (inProgress) {
+      await sendText(from, `Great! Let's continue with your request for ${inProgress.quantity || ''} ${inProgress.item}.`);
+      return handleBuyerIntent(from, inProgress, { intent: 'buy', scores: { confidence: 0.9 } });
+    }
+  }
+
+  // STEP 1: Check for off-topic with NLP router
+  const convResult = await routeConversation(from, text, null);
+
+  if (convResult.shouldRedirect) {
+    // User went off-topic - redirect gently
+    if (convResult.showMenu) {
+      await sendText(from, convResult.message);
+      await ListMessage.mainMenu().send(from);
+    } else {
+      await sendText(from, convResult.message);
+    }
+    return;
+  }
+
+  // STEP 2: JEV DECIDES (System One)
+  const decision = await makeDecision(text, session);
+
+  console.log('[ROUTING]', JSON.stringify({
+    intent: decision.intent,
+    confidence: decision.jev.confidence.toFixed(2),
+    action: decision.action.type,
+    topic: convResult.topic
+  }));
+
+  // Update conversation context with detected topic
+  const convContext = getConversationContext(from);
+  if (decision.intent === 'buy' && decision.extractedParams?.item) {
+    convContext.storeBuyingIntent(decision.extractedParams);
+    convContext.state = 'awaiting_vendor_selection';
+  } else if (decision.intent === 'sell') {
+    convContext.state = 'vendor_onboarding';
+  }
+
+  // STEP 3: Route based on action type
+  if (!decision.action.needsLLM) {
+    return handleDirectResponse(from, text, decision, session);
+  }
+
+  // CEREBRAS NEEDED
+  console.log('[CEREBRAS_INVOKED]', decision.action.reason);
+
+  try {
+    const cerebrasResult = await delegateToCerebras(text, decision);
+    return handleCerebrasResponse(from, text, decision, cerebrasResult, session);
+  } catch (err) {
+    console.error('[CEREBRAS_FAILED]', err.message);
+    await sendAgentResponse(from, 'fallback');
+  }
+}
+
+/**
+ * Decision-aware response handler with validation
+ */
+async function handleDecisionResponse(from, decision, responseFn, responseType) {
+  try {
+    const response = await responseFn();
+    
+    // Validate response (Jev guardrail pattern)
+    const validation = validateResponse(response, '', decision);
+    if (!validation.answersQuestion && !validation.toneOk) {
+      console.warn('[GUARDRAIL] Response failed validation, using fallback');
+      // Could trigger fallback response here
+    }
+    
+    return response;
+  } catch (err) {
+    console.error(`[DECISION] Error in ${responseType} handler:`, err.message);
+    await sendAgentResponse(from, 'fallback');
+  }
+}
+
+/**
+ * Handle numeric vendor selection
+ */
+async function handleNumericSelection(from, text) {
+  try {
+    const recentOrders = await getOrdersByPhone(from);
+    const index = parseInt(text) - 1;
+    if (recentOrders[index]) {
+      await handleVendorSelection(from, recentOrders[index].Reference);
+      return true;
+    }
+  } catch (e) {
+    console.error('Error in numeric selection:', e);
+  }
+  return false;
+}
+
+/**
+ * Handle order status inquiries
+ */
+async function handleOrderStatus(from, session) {
+  try {
+    const orders = await getOrdersByPhone(from);
+    if (orders.length === 0) {
+      await sendText(from, "You don't have any orders yet. Send something like \"I need 50kg rice\" to find vendors!");
+      return;
+    }
+    
+    const pending = orders.filter(o => o.Status === 'pending');
+    const paid = orders.filter(o => o.Status === 'paid');
+    
+    let statusMsg = `📦 *Your Orders*\n\n`;
+    if (pending.length > 0) {
+      statusMsg += `⏳ *Pending:* ${pending.length}\n`;
+    }
+    if (paid.length > 0) {
+      statusMsg += `✅ *Paid:* ${paid.length}\n\n`;
+      statusMsg += `Your PIN for pickup: ${paid[0].Pin}`;
+    }
+    
+    await sendText(from, statusMsg);
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+    await sendText(from, "Couldn't retrieve your orders right now. Try again in a moment.");
+  }
+}
+
+/**
+ * Handle buyer intent with decision context
+ */
+async function handleBuyerIntent(from, intent, decision) {
+  try {
+    console.log(`[BUY] Fast path: item=${intent.item}, qty=${intent.quantity}, loc=${intent.location}`);
+    
+    // Show thinking message based on urgency score
+    if (decision.scores?.urgency > 0.7) {
+      await sendText(from, "Got it! Searching for urgent delivery options... 🔍");
+    }
+    
+    const vendors = await withEnhancedErrorHandling(
+      () => findVendors(intent),
+      { from, intent, stage: 'vendor_search' }
+    );
+
+    if (!vendors.length) {
+      await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
+      return;
+    }
+
+    // Create orders and send vendor list
+    const vendorOrderPairs = [];
+    for (const vendor of vendors) {
+      const reference = crypto.randomUUID();
+      await withEnhancedErrorHandling(
+        () => createOrder({
+          Reference: reference,
+          BuyerPhone: from,
+          VendorId: vendor.id,
+          VendorPhone: vendor.phone,
+          Item: intent.item,
+          Quantity: intent.quantity,
+          Price: vendor.price,
+          Pin: generatePin(),
+          Status: 'pending'
+        }),
+        { from, vendor, intent, stage: 'order_creation' }
+      );
+      vendorOrderPairs.push({ vendor, reference });
+    }
+
+    await withEnhancedErrorHandling(
+      () => sendVendorList(from, intent, vendorOrderPairs),
+      { from, vendorCount: vendors.length, stage: 'send_vendor_list' }
+    );
+    
+  } catch (err) {
+    const errorType = categorizeError(err);
+    const userMessage = getUserFriendlyMessage(errorType, err);
+    logError(err, { from, decision, errorType, stage: 'handleBuyerIntent' });
+    await sendText(from, userMessage);
+  }
 }
 
 // ---------------- Buyer flow ----------------
 
-async function handleTextQuery(from, text) {
+async function handleTextQuery(from, text, decision = null) {
+  // If we have decision context, use it for logging
   try {
     // Use enhanced error handling wrapper for intent parsing
     const intent = await withEnhancedErrorHandling(
@@ -168,17 +436,17 @@ async function handleTextQuery(from, text) {
     }
 
     // Use enhanced error handling wrapper for vendor list sending
+    // Send interactive vendor list
+    const vendorsList = ListMessage.vendorSelection(vendorOrderPairs, intent);
     await withEnhancedErrorHandling(
-      () => sendVendorList(from, intent, vendorOrderPairs),
-      { from, vendorCount: vendors.length, stage: 'send_vendor_list' }
+      () => vendorsList.send(from),
+      { from, vendorCount: vendors.length, stage: 'send_vendor_list_interactive' }
     );
     
   } catch (err) {
-    // Enhanced error handling with categorization
     const errorType = categorizeError(err);
     const userMessage = getUserFriendlyMessage(errorType, err);
     
-    // Log the error with structured data
     logError(err, {
       from,
       text,
@@ -236,6 +504,173 @@ async function handleVendorSelection(from, reference) {
       timestamp: new Date().toISOString()
     });
     
+    await sendText(from, userMessage);
+  }
+}
+
+// ---------------- JEV + CEREBRAS Hybrid Handlers ----------------
+
+/**
+ * Handle direct responses where Jev has high confidence
+ * No Cerebras LLM call needed
+ */
+async function handleDirectResponse(from, text, decision, session) {
+  const { intent, jev, extractedParams } = decision;
+  
+  console.log('[DIRECT_RESPONSE]', intent, '- extracted:', JSON.stringify(extractedParams));
+  
+  switch (intent) {
+  case INTENT_TYPES.GREETING:
+      await sendAgentResponse(from, 'greeting');
+      // Show interactive main menu after greeting
+      await ListMessage.mainMenu().send(from);
+      return;
+    
+    case INTENT_TYPES.HELP:
+      await sendAgentResponse(from, 'help');
+      return;
+    
+    case INTENT_TYPES.BUY:
+      // Fast path for BUY: use extracted params from regex
+      if (extractedParams && extractedParams.item) {
+        const fastIntent = {
+          item: extractedParams.item,
+          quantity: extractedParams.quantity,
+          location: extractedParams.location
+        };
+        return handleFastBuy(from, fastIntent, decision);
+      }
+      
+      // No extraction - need Cerebras parsing
+      console.log('[UPGRADE_TO_CEREBRAS] BUY intent but no extraction');
+      try {
+        const cerebrasResult = await delegateToCerebras(text, decision);
+        return handleCerebrasResponse(from, text, decision, cerebrasResult, session);
+      } catch (err) {
+        console.error('[CEREBRAS_FAILED]', err.message);
+        await sendAgentResponse(from, 'fallback');
+      }
+      return;
+    
+    case INTENT_TYPES.SELL:
+      // Vendor onboarding
+      if (session.state !== 'idle') {
+        return continueVendorOnboarding(session, text);
+      }
+      
+      // Check if they already provided catalog details
+      const sellMatch = text.match(/sell\s+(\w+)\s+for\s*₦?(\d+)/i);
+      if (sellMatch) {
+        const aiDecision = {
+          item: sellMatch[1],
+          price: parseInt(sellMatch[2]),
+          location: text.match(/\b(in|at)\s+([A-Za-z]+)/i)?.[2] || '',
+          shopName: ''
+        };
+        return startVendorOnboarding(session, from, aiDecision);
+      }
+      
+      return startVendorOnboarding(session, from);
+    
+    case INTENT_TYPES.ORDER_STATUS:
+      return handleOrderStatus(from, session);
+    
+    case INTENT_TYPES.VENDOR_SELECTION:
+      await handleNumericSelection(from, text.trim());
+      return;
+    
+    default:
+      // Unknown intent - still try Cerebras
+      try {
+        const cerebrasResult = await delegateToCerebras(text, decision);
+        return handleCerebrasResponse(from, text, decision, cerebrasResult, session);
+      } catch (err) {
+        console.error('[CEREBRAS_FAILED]', err.message);
+        await sendAgentResponse(from, 'fallback');
+      }
+  }
+}
+
+/**
+ * Handle Cerebras result
+ * The LLM has reasoned, now act on its output
+ */
+async function handleCerebrasResponse(from, text, decision, cerebrasResult, session) {
+  const { intent, item, quantity, location, price, shopName } = cerebrasResult;
+  
+  console.log('[CEREBRAS_RESULT]', JSON.stringify({ intent, item, quantity, location }));
+  
+  // Route based on Cerebras intent
+  if (intent === 'BUY' || decision.intent === INTENT_TYPES.BUY) {
+    if (item) {
+      const buyIntent = { item, quantity, location };
+      return handleFastBuy(from, buyIntent, decision);
+    } else {
+      await sendText(from, "I couldn't understand what you're looking for. Try: 'I need 50kg rice in Lagos'");
+      return;
+    }
+  }
+  
+  if (intent === 'SELL' || decision.intent === INTENT_TYPES.SELL) {
+    const aiDecision = { item, price, location, shopName };
+    return startVendorOnboarding(session, from, aiDecision);
+  }
+  
+  // Fallback for unrecognized
+  await sendAgentResponse(from, 'fallback');
+}
+
+/**
+ * Fast BUY handler using extracted params
+ */
+async function handleFastBuy(from, intent, decision) {
+  try {
+    console.log(`[FAST_BUY] item=${intent.item}, qty=${intent.quantity}, loc=${intent.location}`);
+    
+    // Show thinking if urgent
+    if (decision.jev?.scores?.urgency > 0.7) {
+      await sendText(from, "Got it! Searching urgent options... 🔍");
+    } else {
+      await sendText(from, "Searching for vendors... 🔍");
+    }
+    
+    const vendors = await withEnhancedErrorHandling(
+      () => findVendors(intent),
+      { from, intent, stage: 'vendor_search' }
+    );
+
+    if (!vendors.length) {
+      await sendText(from, `No vendors found for ${intent.item}${intent.location ? ` in ${intent.location}` : ''} right now.`);
+      return;
+    }
+
+    const vendorOrderPairs = [];
+    for (const vendor of vendors) {
+      const reference = crypto.randomUUID();
+      await withEnhancedErrorHandling(
+        () => createOrder({
+          Reference: reference,
+          BuyerPhone: from,
+          VendorId: vendor.id,
+          VendorPhone: vendor.phone,
+          Item: intent.item,
+          Quantity: intent.quantity,
+          Price: vendor.price,
+          Pin: generatePin(),
+          Status: 'pending'
+        }),
+        { from, vendor, intent, stage: 'order_creation' }
+      );
+      vendorOrderPairs.push({ vendor, reference });
+    }
+
+    // Use interactive list message instead of plain text
+    await sendVendorListInteractive(from, intent, vendorOrderPairs);
+    
+  } catch (err) {
+    const errorType = categorizeError(err);
+    const userMessage = getUserFriendlyMessage(errorType, err);
+    logError(err, { from, intent, errorType, stage: 'handleFastBuy' });
     await sendText(from, userMessage);
   }
 }
@@ -437,7 +872,8 @@ async function initWhatsApp() {
   await initBaileySocket(async (msg) => {
     console.log('[BAILEYS] 📨 Received:', msg.text.substring(0, 30) + '...', '| from:', msg.from);
     try {
-      await handleTextMessage(msg.from, msg.text);
+      // Pass full message to handle interactive responses
+      await handleTextMessage(msg.from, msg, msg.fullMessage);
     } catch (err) {
       console.error('[BAILEYS] Error handling message:', err.message);
     }

@@ -1,9 +1,26 @@
 const axios = require('axios');
 
+/**
+ * WhatsApp Business API Service
+ * Handles sending messages via Meta's WhatsApp Business API
+ *
+ * Environment Variables Required:
+ *   - META_PHONE_NUMBER_ID: Your WhatsApp Business phone number ID
+ *   - META_ACCESS_TOKEN: Meta Graph API access token
+ */
+
+/**
+ * Get the WhatsApp Graph API URL
+ * @returns {string} The WhatsApp API endpoint URL
+ */
 function graphUrl() {
   return `https://graph.facebook.com/v19.0/${process.env.META_PHONE_NUMBER_ID}/messages`;
 }
 
+/**
+ * Get request headers for WhatsApp API
+ * @returns {Object} Headers object with authorization
+ */
 function headers() {
   return {
     Authorization: `Bearer ${process.env.META_ACCESS_TOKEN}`,
@@ -11,26 +28,55 @@ function headers() {
   };
 }
 
+/**
+ * Send a simple text message
+ * @param {string} to - Recipient WhatsApp number in international format
+ * @param {string} body - Message text content
+ * @returns {Promise<Object>} API response
+ */
 async function sendText(to, body) {
-  return axios.post(graphUrl(), {
-    messaging_product: 'whatsapp',
-    to,
-    type: 'text',
-    text: { body }
-  }, { headers: headers() });
+  return axios.post(
+    graphUrl(),
+    {
+      messaging_product: 'whatsapp',
+      to,
+      type: 'text',
+      text: { body }
+    },
+    { headers: headers() }
+  );
 }
 
 /**
- * `vendors` here are pre-paired with a created Order record, so each row_id
- * is just that order's Reference — the Orders table (Airtable) is the
- * source of truth, not the row_id payload itself.
+ * Send an interactive vendor list message
+ * Vendors are pre-paired with Order records; each row ID is the order reference.
+ * The Orders table (Airtable) is the source of truth.
+ *
+ * @param {string} to - Recipient WhatsApp number
+ * @param {Object} intent - User's search intent
+ * @param {string} intent.quantity - Quantity requested
+ * @param {string} intent.item - Item name
+ * @param {string} intent.location - Location preference
+ * @param {Array} vendorOrderPairs - Array of { vendor, reference } objects
+ * @returns {Promise<Object>} API response
  */
 async function sendVendorList(to, intent, vendorOrderPairs) {
-  const rows = vendorOrderPairs.map(({ vendor, reference }) => ({
-    id: reference,
-    title: vendor.name.slice(0, 24),
-    description: `₦${vendor.price.toLocaleString()} • ${vendor.rating || '—'}★${vendor.verified ? ' • Verified' : ''}`.slice(0, 72)
-  }));
+  // Build list rows from vendor data
+  const rows = vendorOrderPairs.map(({ vendor, reference }) => {
+    const rating = vendor.rating || '—';
+    const verified = vendor.verified ? ' • Verified' : '';
+    const price = `₦${vendor.price.toLocaleString()}`;
+
+    return {
+      id: reference,
+      title: vendor.name.slice(0, 24), // WhatsApp limit: 24 chars
+      description: `${price} • ${rating}★${verified}`.slice(0, 72) // WhatsApp limit: 72 chars
+    };
+  });
+
+  // Build search query text from intent
+  const itemText = [intent.quantity, intent.item].filter(Boolean).join(' ');
+  const locationText = intent.location ? ` in ${intent.location}` : '';
 
   const payload = {
     messaging_product: 'whatsapp',
@@ -40,7 +86,7 @@ async function sendVendorList(to, intent, vendorOrderPairs) {
       type: 'list',
       header: { type: 'text', text: 'Vendors found' },
       body: {
-        text: `Here's what I found for ${[intent.quantity, intent.item].filter(Boolean).join(' ')}${intent.location ? ` in ${intent.location}` : ''}:`
+        text: `Here's what I found for ${itemText}${locationText}:`
       },
       footer: { text: 'Tap to select and pay' },
       action: {
@@ -53,4 +99,10 @@ async function sendVendorList(to, intent, vendorOrderPairs) {
   return axios.post(graphUrl(), payload, { headers: headers() });
 }
 
-module.exports = { sendText, sendVendorList };
+/**
+ * Exported functions
+ */
+module.exports = {
+  sendText,
+  sendVendorList
+};

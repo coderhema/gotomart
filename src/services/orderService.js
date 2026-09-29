@@ -77,11 +77,25 @@ async function markOrderPaid(recordId) {
 }
 
 async function getOrdersByPhone(phone) {
+  // Normalize phone number - extract just the digits from JID format
+  const normalizedPhone = phone.replace(/[@].*$/, '').replace(/^\d+:/, '');
+  
+  // Get recent orders (last 10)
   const { data } = await axios.get(baseUrl(), {
     headers: headers(),
-    params: { filterByFormula: `{BuyerPhone} = "${phone}"`, sort: [{ field: 'CreatedTime', direction: 'desc' }], maxRecords: 10 }
+    params: { 
+      sort: [{ field: 'CreatedTime', direction: 'desc' }], 
+      maxRecords: 10 
+    }
   });
-  return data.records.map(record => ({ id: record.id, ...record.fields }));
+  
+  // Filter client-side for partial phone matching
+  return data.records
+    .filter(record => {
+      const recordPhone = record.fields.BuyerPhone || '';
+      return recordPhone.includes(normalizedPhone) || normalizedPhone.includes(recordPhone.replace(/[@].*$/, ''));
+    })
+    .map(record => ({ id: record.id, ...record.fields }));
 }
 
 module.exports = { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone };

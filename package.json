@@ -1,6 +1,6 @@
 {
   "name": "gotomart",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "WhatsApp-native AI marketplace - Backend API & Landing Page",
   "private": true,
   "workspaces": [
@@ -13,7 +13,11 @@
     "build:landing": "cd landing && npm install && npm run build",
     "preview:landing": "cd landing && npm run preview",
     "test": "node tests/test_integration.js",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "test:purchase": "node tests/test_purchase_flow.js",
+    "test:live-golden": "node tests/test_live_g1_g2_g7.js",
+    "test:all": "node tests/test_integration.js && node tests/test_purchase_flow.js",
+    "start:live-test": "node -e \"process.env.ENABLE_LIVE_TEST='1'; require('./src/index.js')\""
   },
   "dependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.91.0",

@@ -299,7 +299,8 @@ For CI-style live path checks without typing on a phone UI:
 ```bash
 ENABLE_LIVE_TEST=1 npm start
 # other terminal:
-LIVE_TEST_TO=2348XXXXXXXXX node tests/test_live_g1_g2_g7.js
+LIVE_TEST_TO=2348XXXXXXXXX npm run test:live-golden
+# or: LIVE_TEST_TO=2348XXXXXXXXX node tests/test_live_g1_g2_g7.js
 ```
 
 | Step | What it proves |
@@ -315,7 +316,8 @@ Turn off `ENABLE_LIVE_TEST` after verification on shared hosts.
 Does not replace real chat, but validates Airtable + BACHs:
 
 ```bash
-node tests/test_purchase_flow.js
+npm run test:purchase
+# same as: node tests/test_purchase_flow.js
 ```
 
 Expect: vendors found, order created, checkout URL returned, order readable from Airtable.

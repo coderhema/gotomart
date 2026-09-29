@@ -64,8 +64,8 @@ __snapshots__/
 yarn.lock
 package-lock.json
 
-# Environment examples (keep)
-.env.example
+# Keep .env.example tracked; only ignore real secrets
+# .env is ignored above
 
 # Bachs webhook secrets
 bachs_webhook.secret
@@ -73,3 +73,6 @@ bachs_webhook.secret
 # Baileys WhatsApp session (do not commit credentials)
 baileys_auth/
 
+# Local run logs
+gotomart-live.log
+/tmp/gotomart-*.log

@@ -164,18 +164,10 @@ function ChatDemo({ className = '' }) {
       </div>
       <div className="box-border w-full h-2 shrink-0" />
 
-      {/* Message 4 - buyer */}
-      <div className="box-border w-full h-fit shrink-0 flex flex-row justify-end items-start">
-        <div className="box-border w-fit h-fit flex flex-col py-2.5 px-3.5 justify-start items-start bg-navy rounded">
-          <div className="text-[13px] leading-normal text-white font-normal text-left whitespace-nowrap">
-            I&apos;ll take 2kg. My address...
-          </div>
-        </div>
-      </div>
-
       {/* Receipt + Paid, with decorative mark to the left of receipt */}
-      <div className="absolute right-3 sm:right-5 bottom-6 z-20 flex flex-row items-end gap-3 max-w-[calc(100%-1.5rem)]">
-        <DecorativeMark className="hidden sm:block -mb-1 order-first" />
+      <div className="absolute right-3 sm:right-5 bottom-6 z-20 flex flex-row items-end gap-6 max-w-[calc(100%-1.5rem)]">
+     <DecorativeMark className="hidden sm:block order-first" /> 
+    <div className="w-10" />
         <div className="flex flex-col items-stretch gap-2 w-[180px] shrink-0">
           <div className="flex flex-col gap-2 p-4 justify-start items-start bg-white rounded shadow-sm">
             <div className="text-sm leading-normal text-[#111111] font-medium whitespace-nowrap">
@@ -212,8 +204,6 @@ function ChatDemo({ className = '' }) {
             <span className="text-xs leading-normal text-white font-medium whitespace-nowrap">Paid</span>
           </div>
         </div>
-
-        <DecorativeMark className="hidden sm:block -mb-1" />
       </div>
     </div>
   )

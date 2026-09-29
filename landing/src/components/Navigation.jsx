@@ -9,6 +9,7 @@ const navLinks = [
   { label: 'For Buyers', href: '/#buyers', hash: 'buyers' },
   { label: 'Pricing', href: '/#cta', hash: 'cta' },
   { label: 'About', href: '/about', path: '/about' },
+  { label: 'Vendors', href: '/vendors', path: '/vendors' },
 ]
 
 function Navigation() {

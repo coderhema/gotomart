@@ -46,7 +46,7 @@ function About() {
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900">Our mission</h2>
             <p className="text-base text-gray-text leading-relaxed">
               Markets already run on chat. GotoMart turns those chats into a reliable
-              marketplace: search, match, pay, and deliver — powered by AI routing and
+              marketplace: search, match, pay, and deliver powered by AI routing and
               real vendors on the ground.
             </p>
             <p className="text-base text-gray-text leading-relaxed">
@@ -79,7 +79,7 @@ function About() {
           <p className="text-base text-gray-text leading-relaxed">
             Buyers message GotoMart on WhatsApp. We find matching vendors, share options,
             and open a secure checkout. After payment, both sides get a PIN so handover is
-            clear. Vendors can list products the same way — right from chat.
+            clear. Vendors can list products the same way right from chat.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <Link

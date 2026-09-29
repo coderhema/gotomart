@@ -1,9 +1,9 @@
-# GoToMart — What We're Actually Building
+# GoToMart - What We're Actually Building
 
 ## The one-line version
 
 GoToMart is a WhatsApp contact you chat with to buy everyday stuff from local
-vendors — no app, no browsing, no account. You just tell it what you want,
+vendors - no app, no browsing, no account. You just tell it what you want,
 it finds you the best options nearby, and you pay right there in the chat.
 
 It's not a marketplace app with a homepage and search bar. It's an **agent**
@@ -21,14 +21,14 @@ messages GoToMart like she'd message a friend:
 
 GoToMart doesn't show her a catalog. It reads that sentence, figures out
 she wants *rice*, *50kg*, in *Ikorodu*, checks which registered vendors
-actually sell that in that area, and replies with a WhatsApp list — the
+actually sell that in that area, and replies with a WhatsApp list - the
 same tappable list UI WhatsApp already supports, showing the top 3 options
 sorted by price and trust (verified vendors first):
 
 > **GoToMart:** Here's what I found for 50kg bag rice in Ikorodu:
-> — Iya Basira Foods — ₦45,000 • ★4.8 • Verified
-> — Ikorodu Grains Hub — ₦46,500 • ★4.5 • Verified
-> — Quick Rice Depot — ₦44,000 • ★4.0
+> - Iya Basira Foods - ₦45,000 • ★4.8 • Verified
+> - Ikorodu Grains Hub - ₦46,500 • ★4.5 • Verified
+> - Quick Rice Depot - ₦44,000 • ★4.0
 
 Amaka taps **Iya Basira Foods**. GoToMart immediately sends her a secure
 payment link. She pays.
@@ -39,11 +39,11 @@ payment link. She pays.
 At the same time, GoToMart messages the vendor:
 
 > **GoToMart → Iya Basira Foods:** You've received ₦45,000 for 1 bag of
-> rice. Contact the buyer at 080XXXXXXXX to arrange delivery — they'll
+> rice. Contact the buyer at 080XXXXXXXX to arrange delivery - they'll
 > confirm with PIN 4821.
 
 That PIN is the handshake: it's how the vendor proves to Amaka (and Amaka
-proves to the vendor) that this is the real, paid-for handover — not
+proves to the vendor) that this is the real, paid-for handover - not
 someone else showing up and claiming the order.
 
 Total effort from Amaka's side: one message, one tap, one payment. She
@@ -66,8 +66,8 @@ the same WhatsApp number:
 
 > **Mr. Bello:** I want to sell on GoToMart
 
-GoToMart recognizes this is a *seller*, not a buyer — different keywords,
-different flow — and switches into onboarding mode:
+GoToMart recognizes this is a *seller*, not a buyer - different keywords,
+different flow - and switches into onboarding mode:
 
 > **GoToMart:** Want to list your business on GoToMart? Reply YES to get
 > started.
@@ -79,13 +79,13 @@ different flow — and switches into onboarding mode:
 >
 > **Mr. Bello:** GTBank, 0123456789, Bello Provisions
 >
-> **GoToMart:** Got it! Now here's the easy part — open your WhatsApp Business Catalog, tap on any product you want to sell, and use the **Forward** button to send it directly to this chat. We'll automatically add it to your store.
+> **GoToMart:** Got it! Now here's the easy part - open your WhatsApp Business Catalog, tap on any product you want to sell, and use the **Forward** button to send it directly to this chat. We'll automatically add it to your store.
 
 Mr. Bello forwards the rice product from his catalog. GoToMart receives the structured JSON with all the product details and saves it.
 
 > **GoToMart:** You're live on GoToMart! Your product is now searchable by buyers nearby.
 
-That's it — Mr. Bello never downloaded anything, never filled out a form,
+That's it - Mr. Bello never downloaded anything, never filled out a form,
 never spoke to a human. He's now a searchable vendor, and the next time
 someone like Amaka asks for rice in his area, he's in the running.
 
@@ -93,7 +93,7 @@ someone like Amaka asks for rice in his area, he's in the running.
 
 ## Why this is the hard/interesting part
 
-The actual engineering challenge isn't "build a database of vendors" — it's
+The actual engineering challenge isn't "build a database of vendors" - it's
 the **translation layer** in the middle:
 
 - Turning a messy sentence ("I need rice for the weekend, cheap, somewhere
@@ -103,13 +103,13 @@ the **translation layer** in the middle:
 - Remembering where someone is mid-conversation (e.g. Mr. Bello is halfway
   through onboarding) even though the backend technically forgets
   everything between messages.
-- Closing the loop with real money and a real handover — not just "show
+- Closing the loop with real money and a real handover - not just "show
   price," but generate a live payment link, confirm the payment actually
   cleared, and only then release the PIN and notify the vendor.
 
-Everything else — nice UI, vendor ratings, escrow, geo-search — is stuff
+Everything else - nice UI, vendor ratings, escrow, geo-search - is stuff
 we can layer on later. The demo that proves this works is: **type a
-request, get a real shortlist, tap, pay, get a PIN — and watch the vendor
+request, get a real shortlist, tap, pay, get a PIN - and watch the vendor
 get notified in real time.**
 
 ---
@@ -117,12 +117,12 @@ get notified in real time.**
 ## What's intentionally *not* in the MVP
 
 - **No group chat support.** WhatsApp's group API needs a Meta-verified
-  Official Business Account, which we don't have time to get — GoToMart
+  Official Business Account, which we don't have time to get - GoToMart
   only works in 1-on-1 chats for now.
 - **No automatic bank payouts.** Vendors give us their bank details, but
-  for now GoToMart just *tells* them a payment came in — it doesn't
+  for now GoToMart just *tells* them a payment came in - it doesn't
   actually move money to their account yet.
-- **No live GPS/proximity matching** — vendors are matched by the location
+- **No live GPS/proximity matching** - vendors are matched by the location
   name they typed, not real coordinates.
 
 None of that blocks the demo. All of it is a good "what's next" slide.
@@ -152,7 +152,7 @@ None of that blocks the demo. All of it is a good "what's next" slide.
 
 ---
 
-## Data Flow — Buyer Purchase
+## Data Flow - Buyer Purchase
 
 ```
 ┌────────────┐     ┌──────────────┐     ┌────────────────┐     ┌───────────┐
@@ -184,7 +184,7 @@ None of that blocks the demo. All of it is a good "what's next" slide.
 
 ---
 
-## State Machine — Vendor Onboarding
+## State Machine - Vendor Onboarding
 
 ```
                     ┌─────────────┐

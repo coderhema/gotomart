@@ -1,6 +1,6 @@
 # Release Notes
 
-## v0.1.1 — Purchase path, Airtable/BACHs fixes, WhatsApp deploy docs
+## v0.1.1 - Purchase path, Airtable/BACHs fixes, WhatsApp deploy docs
 
 **Date:** 2026-09-29  
 **Git:** `e6b8206` on `main`  
@@ -18,15 +18,15 @@ Hardens the WhatsApp-native buy flow from vendor discovery through order creatio
 
 ### Technical changes
 
-- **Orders (`orderService.js`)** — Writes schema-correct fields: `Reference`, `BuyerPhone`, `VendorId`, `VendorPhone`, `Item`, `Quantity` (text), `Price`, `Pin`, `Status`. Removed invalid field-name retry noise.
-- **Payments (`paymentService.js`)** — Replaces Paystack-centric helper; uses `BACHS_PRODUCT_ID`, returns `checkout_url`, falls back to ad-hoc `pricing` when product cart fails.
-- **Env** — `.env.example` documents `BACHS_PRODUCT_ID`, Tinyfish key, table names.
-- **Security/hygiene** — `baileys_auth/` gitignored; do not commit WhatsApp session material.
-- **Commerce stack** — Includes commerce engine, payment UX helpers, product intelligence modules shipped with this line of work.
-- **Tests** — `tests/test_purchase_flow.js` covers session → vendor search → order create → checkout URL → Airtable verify.
+- **Orders (`orderService.js`)** - Writes schema-correct fields: `Reference`, `BuyerPhone`, `VendorId`, `VendorPhone`, `Item`, `Quantity` (text), `Price`, `Pin`, `Status`. Removed invalid field-name retry noise.
+- **Payments (`paymentService.js`)** - Replaces Paystack-centric helper; uses `BACHS_PRODUCT_ID`, returns `checkout_url`, falls back to ad-hoc `pricing` when product cart fails.
+- **Env** - `.env.example` documents `BACHS_PRODUCT_ID`, Tinyfish key, table names.
+- **Security/hygiene** - `baileys_auth/` gitignored; do not commit WhatsApp session material.
+- **Commerce stack** - Includes commerce engine, payment UX helpers, product intelligence modules shipped with this line of work.
+- **Tests** - `tests/test_purchase_flow.js` covers session → vendor search → order create → checkout URL → Airtable verify.
 - **Docs**
-  - `WHATSAPP_DEPLOYMENT.md` — full deploy (always-on host, env, webhooks, pm2, checklist)
-  - `BAILEYS_SETUP.md` — quick QR/local guide + pointer to full deploy doc
+ - `WHATSAPP_DEPLOYMENT.md` - full deploy (always-on host, env, webhooks, pm2, checklist)
+ - `BAILEYS_SETUP.md` - quick QR/local guide + pointer to full deploy doc
 
 ### Verification
 
@@ -55,7 +55,7 @@ Expected E2E outcomes (sandbox):
 - Changes landed directly on `main` (no separate PR for this cut).
 - Automated test does not drive a live WhatsApp client UI; Baileys still requires a linked device for real chat.
 - Full paid-webhook → vendor payout path is implemented but not fully covered by `test_purchase_flow.js`.
-- BACHs catalog product uses a fixed list price unless pricing fallback is used—tune product strategy for multi-price catalogs.
+- BACHs catalog product uses a fixed list price unless pricing fallback is used - tune product strategy for multi-price catalogs.
 
 ### Upgrade / ops checklist
 

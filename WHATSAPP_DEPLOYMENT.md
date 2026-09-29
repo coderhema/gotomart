@@ -1,4 +1,4 @@
-# WhatsApp Integration — Deployment Guide
+# WhatsApp Integration - Deployment Guide
 
 This guide covers deploying GoToMart’s **chat → vendor → order → payment** path with WhatsApp (Baileys), Airtable, and BACHs.
 
@@ -204,6 +204,10 @@ npm run build:landing
 Keep the **bot** on the always-on host; landing can be static.
 
 ---
+
+## 4.6 Test on a real WhatsApp phone
+
+Step-by-step buyer chat script, Airtable checks, webhook notes, and demo flow: **[TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md)**.
 
 ## 5. Post-deploy checklist
 

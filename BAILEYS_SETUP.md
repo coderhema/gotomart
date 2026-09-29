@@ -1,10 +1,10 @@
-# Baileys WhatsApp Setup — Quick Guide
+# Baileys WhatsApp Setup - Quick Guide
 
 For full production steps (hosting, webhooks, Airtable, BACHs), see **[WHATSAPP_DEPLOYMENT.md](./WHATSAPP_DEPLOYMENT.md)**.
 
 ## What is Baileys?
 
-WebSocket-based WhatsApp client — no Meta Cloud / Twilio required for the primary path.
+WebSocket-based WhatsApp client - no Meta Cloud / Twilio required for the primary path.
 
 - Your linked WhatsApp number becomes the bot
 - Scan QR once; session stored in `baileys_auth/` (gitignored)
@@ -54,3 +54,9 @@ WhatsApp (Baileys)
 - WhatsApp may restrict spammy accounts
 - Do not commit `.env` or `baileys_auth/`
 - Serverless-only hosts cannot keep the Baileys socket reliably online
+
+## Test on WhatsApp
+
+Full phone testing steps: **[TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md)**.
+
+Short version: start the server, scan QR, message the linked number with `I need rice in Ikorodu`, reply `1`, then confirm the order in Airtable.

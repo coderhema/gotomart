@@ -198,10 +198,10 @@ Three tables in one base.
 | UID | Single line text |
 | BankDetails | Long text |
 
-Seed 5–8 rows manually before building anything else — you can't test
+Seed 5-8 rows manually before building anything else - you can't test
 routing against an empty table.
 
-**Sessions** (conversation state — replaces Redis for this MVP)
+**Sessions** (conversation state - replaces Redis for this MVP)
 | Field | Type |
 |---|---|
 | Phone | Single line text |
@@ -231,7 +231,7 @@ curl -X POST http://localhost:3000/webhook \
   -d '{"entry":[{"changes":[{"value":{"messages":[{"from":"2348000000000","type":"text","text":{"body":"I need a 50kg bag of rice in Ikorodu"}}]}}]}]}'
 ```
 
-**Vendor onboarding — send this a few times in sequence, same `from` number:**
+**Vendor onboarding - send this a few times in sequence, same `from` number:**
 ```bash
 curl -X POST http://localhost:3000/webhook -H "Content-Type: application/json" \
   -d '{"entry":[{"changes":[{"value":{"messages":[{"from":"2348011111111","type":"text","text":{"body":"I want to sell on GoToMart"}}]}}]}]}'
@@ -252,13 +252,13 @@ curl -X POST http://localhost:3000/bachs-webhook -H "Content-Type: application/j
   -H "x-bachs-signature: (use BACHS_WEBHOOK_SECRET from .env to generate)" \
   -d '{"type":"collection.succeeded","data":{"checkout_session_id":"chk_...","reference":"PASTE_REFERENCE_HERE","amount":"45000.00","currency":"NGN"}}'
 ```
-Signature verification means you can't easily fake this one locally — the
+Signature verification means you can't easily fake this one locally - the
 fastest way to test the payment confirmation branch is to use Bachs sandbox
 and their test webhooks, with your Vercel URL + `/bachs-webhook`
 registered as the webhook in your Bachs dashboard.
 
 While iterating, comment out the `axios.post` calls in `whatsappService.js`
-and `console.log` the payload instead — much faster than round-tripping
+and `console.log` the payload instead - much faster than round-tripping
 through Meta every time.
 
 ## 5. Deploy
@@ -352,3 +352,7 @@ vercel --prod
 ## Release notes
 
 See [RELEASE_NOTES.md](./RELEASE_NOTES.md) for versioned change summaries.
+
+## Test on WhatsApp
+
+See [TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md) for the full phone testing guide (link device, buyer chat script, Airtable checks).

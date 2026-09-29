@@ -40,7 +40,7 @@ function Features() {
           {features.map((feature) => (
             <div key={feature.title} className="flex flex-col items-start">
               <div className="w-12 h-12 bg-cream-dark rounded-lg flex items-center justify-center mb-4">
-                <feature.icon className="w-6 h-6 text-navy" />
+                <feature.icon className="w-6 h-6 text-navy" weight="duotone" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-sm text-gray-text">{feature.description}</p>

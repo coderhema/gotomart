@@ -333,17 +333,23 @@ class ListMessage {
    * @param {Object} intent - Search intent
    * @returns {ListMessage}
    */
-  static vendorSelection(vendors, intent = {}) {
-    const options = vendors.map((v, i) => ({
-      id: `vendor_${v.reference || i}`,
-      text: v.name?.slice(0, 24) || `Vendor ${i + 1}`,
-      description: `₦${v.price} • ${v.location || 'N/A'}`.slice(0, 72)
-    }));
+  static vendorSelection(vendorsOrPairs, intent = {}) {
+    // Accept either plain vendors or { vendor, reference } pairs from order creation
+    const rows = vendorsOrPairs.map((entry, i) => {
+      const isPair = entry && entry.vendor;
+      const vendor = isPair ? entry.vendor : entry;
+      const reference = isPair ? entry.reference : (entry.reference || entry.id || i);
+      return {
+        id: `vendor_${reference}`,
+        text: (vendor.name || `Vendor ${i + 1}`).slice(0, 24),
+        description: `₦${vendor.price} • ${vendor.location || 'N/A'}${vendor.verified ? ' ✅' : ''}`.slice(0, 72)
+      };
+    });
 
     return new ListMessage(
       '🛒 Available Vendors',
-      `Found ${vendors.length} vendors${intent.location ? ` in ${intent.location}` : ''}. Tap to select:`,
-      [{ title: 'Select a Vendor', options }]
+      `Found ${rows.length} vendors${intent.location ? ` in ${intent.location}` : ''}. Tap to select:`,
+      [{ title: 'Select a Vendor', options: rows }]
     );
   }
 

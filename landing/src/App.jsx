@@ -1,26 +1,18 @@
-import AnnouncementBanner from './components/AnnouncementBanner'
-import Navigation from './components/Navigation'
-import Hero from './components/Hero'
-import Features from './components/Features'
-import HowItWorks from './components/HowItWorks'
-import ForVendors from './components/ForVendors'
-import ForBuyers from './components/ForBuyers'
-import Footer from './components/Footer'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
+import Home from './pages/Home'
+import About from './pages/About'
 
 function App() {
   return (
-    <div className="min-h-screen bg-cream">
-      <AnnouncementBanner />
-      <Navigation />
-      <main id="home">
-        <Hero />
-        <Features />
-        <HowItWorks />
-        <ForVendors />
-        <ForBuyers />
-      </main>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

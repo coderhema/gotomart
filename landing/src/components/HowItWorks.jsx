@@ -1,61 +1,53 @@
+import { WA } from '../lib/actions'
+
+const steps = [
+  {
+    number: '01',
+    title: 'Find vendors',
+    description: 'Browse verified vendors selling what you need',
+    cta: 'Browse Vendors',
+    href: WA.browseVendors,
+  },
+  {
+    number: '02',
+    title: 'Chat on WhatsApp',
+    description: 'Message vendors directly and negotiate',
+    cta: 'Start Chat',
+    href: WA.startChat,
+  },
+  {
+    number: '03',
+    title: 'Buy & Deliver',
+    description: 'Safe payments and reliable delivery',
+    cta: 'Shop Now',
+    href: WA.shopNow,
+  },
+]
+
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="w-full bg-cream px-4 sm:px-6 lg:px-20 py-20">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">
-            How It Works
-          </h2>
-          <p className="text-gray-text max-w-2xl mx-auto">
-            Three simple steps to buy or sell on GoToMart
-          </p>
-        </div>
+    <section id="how-it-works" className="w-full bg-cream-dark px-4 sm:px-10 lg:px-20 py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto flex flex-col gap-12">
+        <h2 className="text-3xl lg:text-4xl font-light text-gray-900">
+          Connect in three simple steps
+        </h2>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Step 1 */}
-          <div className="relative">
-            <div className="absolute -top-4 -left-2 text-7xl font-light text-navy/10">01</div>
-            <div className="relative pt-8">
-              <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center text-lg font-medium mb-4">
-                1
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3">Message</h3>
-              <p className="text-gray-text">
-                Simply text GoToMart what you need. "I want a 50kg bag of rice in Ikorodu" 
-                or "I want to sell groceries"
-              </p>
+        <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+          {steps.map((step) => (
+            <div key={step.number} className="flex flex-col gap-4 items-start">
+              <span className="text-sm font-medium text-navy tracking-wide">{step.number}</span>
+              <h3 className="text-xl font-medium text-gray-900">{step.title}</h3>
+              <p className="text-sm text-gray-text leading-relaxed">{step.description}</p>
+              <a
+                href={step.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 text-sm text-gray-900 underline underline-offset-4 hover:text-navy transition-colors"
+              >
+                {step.cta}
+              </a>
             </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="relative">
-            <div className="absolute -top-4 -left-2 text-7xl font-light text-navy/10">02</div>
-            <div className="relative pt-8">
-              <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center text-lg font-medium mb-4">
-                2
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3">Match</h3>
-              <p className="text-gray-text">
-                For buyers: Get a curated list of vendors with prices and ratings. 
-                For vendors: Share your product catalog directly from WhatsApp Business
-              </p>
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="relative">
-            <div className="absolute -top-4 -left-2 text-7xl font-light text-navy/10">03</div>
-            <div className="relative pt-8">
-              <div className="w-12 h-12 rounded-full bg-navy text-white flex items-center justify-center text-lg font-medium mb-4">
-                3
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-3">Transact</h3>
-              <p className="text-gray-text">
-                Choose a vendor, pay securely, get a confirmation PIN. 
-                Vendors receive payment and buyer details for delivery
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,12 +1,9 @@
 const axios = require('axios');
+const { normalizePhone } = require('../utils/phone');
 
 /**
- * Lightweight conversation state, kept in an Airtable "Sessions" table
- * instead of Redis — one row per phone number. This is what makes
- * multi-turn vendor onboarding possible on Vercel's stateless functions
- * without adding new infra.
- *
- * Sessions table fields: Phone (text, primary), State (text), Data (long text, JSON), UpdatedAt (date)
+ * Conversation state in Airtable "Sessions" table (one row per phone).
+ * Fields: Phone (text), State (text), Data (long text JSON), UpdatedAt (date)
  */
 function baseUrl() {
   const table = process.env.AIRTABLE_SESSIONS_TABLE || 'Sessions';
@@ -20,42 +17,134 @@ function headers() {
   };
 }
 
-async function getSession(phone) {
+function escapeFormula(str) {
+  return String(str).replace(/"/g, '\\"');
+}
+
+async function getSession(phoneOrJid) {
+  const normalized = normalizePhone(phoneOrJid);
+  if (!normalized) {
+    return { phone: '', jid: phoneOrJid || '', state: 'idle', data: {}, recordId: null };
+  }
+
+  const formula = `OR({Phone} = "${escapeFormula(normalized)}", FIND("${escapeFormula(normalized)}", {Phone}))`;
+
   const { data } = await axios.get(baseUrl(), {
     headers: headers(),
-    params: { filterByFormula: `{Phone} = "${phone}"`, maxRecords: 1 }
+    params: { filterByFormula: formula, maxRecords: 1 }
   });
+
   const record = data.records[0];
-  if (!record) return { phone, state: 'idle', data: {}, recordId: null };
+  if (!record) {
+    return {
+      phone: normalized,
+      jid: String(phoneOrJid || ''),
+      state: 'idle',
+      data: {},
+      recordId: null
+    };
+  }
 
   let parsedData = {};
-  try { parsedData = JSON.parse(record.fields.Data || '{}'); } catch { /* ignore */ }
+  try {
+    parsedData = JSON.parse(record.fields.Data || '{}');
+  } catch {
+    parsedData = {};
+  }
 
   return {
-    phone,
+    phone: normalized,
+    jid: parsedData.jid || String(phoneOrJid || ''),
     state: record.fields.State || 'idle',
     data: parsedData,
-    recordId: record.id
+    recordId: record.id,
+    lastVendors: parsedData.lastVendors || null,
+    lastIntent: parsedData.lastIntent || null,
+    orderRef: parsedData.orderRef || null,
+    paymentStep: parsedData.paymentStep || null,
+    selectedVendorId: parsedData.selectedVendorId || null
   };
 }
 
-async function setSession(session) {
+/**
+ * setSession(session) or setSession(phone, partialSession)
+ */
+async function setSession(phoneOrSession, maybeSession) {
+  let incoming;
+  if (typeof phoneOrSession === 'string') {
+    incoming = { ...(maybeSession || {}), phone: phoneOrSession };
+  } else {
+    incoming = phoneOrSession || {};
+  }
+
+  const phone = normalizePhone(incoming.phone || incoming.from || '');
+  if (!phone) {
+    throw new Error('setSession requires a phone');
+  }
+
+  let recordId = incoming.recordId || null;
+  let existingData = {};
+  try {
+    const existing = await getSession(phone);
+    if (!recordId) recordId = existing.recordId;
+    existingData = existing.data || {};
+  } catch {
+    existingData = {};
+  }
+
+  const trackingKeys = [
+    'jid', 'lastVendors', 'lastIntent', 'orderRef', 'paymentStep',
+    'selectedVendorId', 'selectedVendorUid', 'vendorSearchTime',
+    'lastItem', 'lastLocation', 'bankDetails', 'catalog'
+  ];
+
+  const mergedData = {
+    ...existingData,
+    ...(incoming.data && typeof incoming.data === 'object' ? incoming.data : {})
+  };
+
+  for (const key of trackingKeys) {
+    if (incoming[key] !== undefined) {
+      mergedData[key] = incoming[key];
+    }
+  }
+
+  if (incoming.jid) mergedData.jid = incoming.jid;
+  else if (incoming.phone && String(incoming.phone).includes('@')) {
+    mergedData.jid = incoming.phone;
+  }
+
+  const state = incoming.state != null ? incoming.state : 'idle';
+
   const fields = {
-    Phone: session.phone,
-    State: session.state,
-    Data: JSON.stringify(session.data || {}),
+    Phone: phone,
+    State: state,
+    Data: JSON.stringify(mergedData),
     UpdatedAt: new Date().toISOString()
   };
 
-  if (session.recordId) {
-    await axios.patch(`${baseUrl()}/${session.recordId}`, { fields }, { headers: headers() });
-  } else {
-    await axios.post(baseUrl(), { fields }, { headers: headers() });
+  if (recordId) {
+    await axios.patch(`${baseUrl()}/${recordId}`, { fields }, { headers: headers() });
+    return { phone, state, data: mergedData, recordId };
   }
+
+  const { data } = await axios.post(baseUrl(), { fields }, { headers: headers() });
+  return { phone, state, data: mergedData, recordId: data.id };
 }
 
-async function clearSession(session) {
-  return setSession({ ...session, state: 'idle', data: {} });
+async function clearSession(sessionOrPhone) {
+  if (typeof sessionOrPhone === 'string') {
+    return setSession({ phone: sessionOrPhone, state: 'idle', data: {} });
+  }
+  return setSession({
+    ...sessionOrPhone,
+    state: 'idle',
+    data: {},
+    lastVendors: null,
+    lastIntent: null,
+    orderRef: null,
+    paymentStep: null
+  });
 }
 
 module.exports = { getSession, setSession, clearSession };

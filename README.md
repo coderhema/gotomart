@@ -2,6 +2,231 @@
 
 A WhatsApp-native AI marketplace connecting buyers with local vendors.
 
+## System architecture
+
+GoToMart is a WhatsApp-native commerce bot. Buyers chat to find local vendors, select one, pay via BACHs, and receive a handover PIN. Vendors can onboard through the same chat. Airtable is the system of record; Baileys keeps a live WhatsApp Web socket (primary channel).
+
+```text
+                    +------------------+
+                    |  Buyer WhatsApp  |
+                    +--------+---------+
+                             |
+                             | messages
+                             v
+               +-------------+--------------+
+               | Baileys socket             |
+               | src/services/twilioService |
+               +-------------+--------------+
+                             |
+                             v
+               +-------------+--------------+
+               | Express app src/index.js   |
+               | handleTextMessage          |
+               +--+------+------+------+----+
+                  |      |      |      |
+         +--------+  +---+  +---+  +---+--------+
+         |           |      |      |            |
+         v           v      v      v            v
+  decisionService  conversation  commerce   payment /
+  + cerebras       Service       Engine     whatsappPayment
+         |           |      |      |            |
+         +-----+-----+------+------+------------+
+               |
+               v
+    +----------+-----------+        +------------------+
+    | Airtable             |        | BACHs            |
+    | Vendors / Sessions / |        | checkout_url     |
+    | Orders               |        | webhooks /payout |
+    +----------------------+        +--------+---------+
+                                             |
+                                             v
+                                    POST /webhook
+                                    mark order paid
+                                    send PIN via WhatsApp
+```
+
+### Buy flow (runtime)
+
+1. Inbound WhatsApp text (or interactive button/list) hits Baileys.
+2. `handleTextMessage` routes via conversation + decision services (JEV) and optional Cerebras.
+3. Buy intent with item + location -> `airtableService.findVendors`.
+4. Vendor shortlist sent (text and/or interactive list).
+5. User selects vendor (`1` or list row) -> `orderService.createOrder` (Status `pending`, PIN).
+6. `paymentService.createCheckoutLink` returns BACHs `checkout_url`.
+7. Buyer pays; BACHs calls `POST /webhook` (or `/paystack/webhook`).
+8. Order marked `paid`; buyer (and vendor when possible) get PIN via WhatsApp.
+
+### Sell flow (runtime)
+
+1. Seller intent (`I want to sell`) enters onboarding.
+2. Collect shop / product / price / location / bank details over chat.
+3. Vendor row written via `vendorService` into Airtable Vendors.
+
+### Core components
+
+| Layer | Path | Role |
+|-------|------|------|
+| HTTP + webhooks | `src/index.js` | Express, Meta verify, BACHs webhooks, Baileys bootstrap, message handler |
+| WhatsApp transport | `src/services/twilioService.js` | Baileys connect, `sendText`, vendor lists |
+| UI components | `src/services/whatsappComponents.js` | Buttons, lists, interactive parse |
+| Routing | `src/services/decisionService.js`, `conversationService.js`, `commerceEngine.js` | Intent, state, buy/sell machine |
+| AI | `src/services/cerebrasService.js` | Intent / conversation assist |
+| Data | `airtableService.js`, `orderService.js`, `sessionService.js`, `vendorService.js` | Vendors, orders, sessions |
+| Payments | `paymentService.js`, `whatsappPaymentService.js` | Checkout, signature verify, payouts, in-chat pay UX |
+| Product intel | `productIntelligence.js`, `tinyfishService.js` | Optional price/market helpers |
+| Landing | `landing/` | Marketing site (Vite/React), deployable separately |
+
+### Data stores (Airtable)
+
+**Vendors:** Name, Item, Location, Price, Rating, Verified, Phone, UID, BankDetails (optional).
+
+**Orders:** Reference, BuyerPhone, VendorId, VendorPhone, Item, Quantity (**text**), Price, Pin, Status (`pending` | `paid`).
+
+**Sessions:** multi-turn chat state per phone.
+
+### HTTP surface
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/` | Health |
+| GET | `/webhook` | Meta subscription verify |
+| POST | `/webhook` | BACHs payment events |
+| POST | `/paystack/webhook` | Legacy alias -> same paid handler |
+| POST | `/test/simulate-message` | Dev only if `ENABLE_LIVE_TEST=1` |
+
+### Design notes
+
+- **Primary WhatsApp path is Baileys** (linked device). Meta/Twilio env vars remain for backup or hybrid setups.
+- Baileys needs an **always-on Node process** and durable `baileys_auth/` (gitignored). Pure serverless is a poor fit for the socket.
+- Vendor match is keyword/location text in Airtable (no live GPS in MVP).
+- BACHs checkout uses `BACHS_PRODUCT_ID` and returns `checkout_url`.
+
+---
+
+## Deployment
+
+### Prerequisites
+
+- Node.js 18+
+- Airtable base (Vendors, Sessions, Orders)
+- BACHs API key + webhook secret + product id
+- Cerebras API key
+- Spare WhatsApp number recommended for the bot
+- Always-on host for the bot (VPS, Railway, Render, Fly, etc.)
+- Optional: Vercel (or static host) for `landing/` only
+
+### 1. Configure environment
+
+```bash
+git clone https://github.com/coderhema/gotomart.git
+cd gotomart
+cp .env.example .env
+npm install
+```
+
+Fill at least:
+
+| Variable | Purpose |
+|----------|---------|
+| `AIRTABLE_BASE_ID` / `AIRTABLE_API_KEY` | Data plane |
+| `AIRTABLE_*_TABLE` | Table names (defaults Vendors/Sessions/Orders) |
+| `BACHS_API_KEY` / `BACHS_WEBHOOK_SECRET` | Payments + webhook HMAC |
+| `BACHS_PRODUCT_ID` | Checkout product in BACHs |
+| `CEREBRAS_API_KEY` | AI routing / replies |
+| `BASE_URL` | Public https origin (return URLs + webhook base) |
+| `PORT` | Default `3000` |
+| `META_*` / `TWILIO_*` | Optional alternate channels |
+
+Create a BACHs product once (sandbox example):
+
+```bash
+curl -X POST "https://sandbox-api.bachs.io/v1/products" \
+  -H "Authorization: Bearer $BACHS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"GoToMart Default","description":"Marketplace checkout","price":{"amount":45000,"currency":"NGN"}}'
+```
+
+Set `BACHS_PRODUCT_ID` to the returned `id`.
+
+### 2. Run the bot (local)
+
+```bash
+npm start
+# or
+npm run dev
+```
+
+1. Scan Baileys QR: WhatsApp -> Settings -> Linked Devices -> Link a Device.
+2. Health: `curl http://localhost:3000/`
+3. Message the linked number: `I need rice in Ikorodu` then `1`.
+
+### 3. Production bot host
+
+```bash
+npm install --omit=dev
+# set production .env on the server only (never commit)
+npm start
+# or pm2:
+# pm2 start src/index.js --name gotomart && pm2 save && pm2 startup
+```
+
+- Put nginx/Caddy TLS in front of `PORT`.
+- Set `BASE_URL=https://api.yourdomain.com`.
+- Persist and back up `baileys_auth/` privately.
+- One bot instance per WhatsApp number (avoid multi-host Baileys conflict).
+
+### 4. Webhooks
+
+In BACHs dashboard:
+
+```text
+https://api.yourdomain.com/webhook
+```
+
+Use the same secret as `BACHS_WEBHOOK_SECRET`. Accepted headers: `x-bachs-signature`, `x-webhook-signature`.
+
+Local webhook testing needs a tunnel (e.g. ngrok) and matching `BASE_URL`.
+
+### 5. Landing page (optional)
+
+```bash
+npm run build:landing
+# or deploy the landing/ workspace to Vercel
+```
+
+Keep the **bot** on always-on Node; the landing site can be static.
+
+### 6. Verify after deploy
+
+```bash
+# purchase path (Airtable + BACHs)
+npm run test:purchase
+
+# greeting / help / paid webhook (dev inject)
+npm run start:live-test   # ENABLE_LIVE_TEST=1
+# other terminal:
+npm run test:live-golden
+```
+
+Phone checklist: [TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md)  
+Full runbook: [WHATSAPP_DEPLOYMENT.md](./WHATSAPP_DEPLOYMENT.md)  
+Release history: [RELEASE_NOTES.md](./RELEASE_NOTES.md)
+
+**Production:** do not leave `ENABLE_LIVE_TEST=1` enabled on a public host without protection.
+
+### 7. Post-deploy checklist
+
+- [ ] `GET /` healthy
+- [ ] Baileys connected (no QR loop)
+- [ ] Buyer search returns Airtable vendors
+- [ ] Order row `pending` + PIN
+- [ ] Checkout URL opens BACHs
+- [ ] Webhook marks order `paid`
+- [ ] `npm run test:purchase` green against intended env
+- [ ] Secrets and `baileys_auth/` not in git
+
+---
+
 ## Project Structure
 
 ```
@@ -12,7 +237,7 @@ gotomart/
 │   │   ├── airtableService.js    # Database operations
 │   │   ├── cerebrasService.js    # AI/LLM integration
 │   │   ├── orderService.js       # Order management
-│   │   ├── paystackService.js    # Payment processing
+│   │   ├── paymentService.js    # Payment processing
 │   │   ├── sessionService.js     # User session state
 │   │   ├── vendorService.js      # Vendor onboarding
 │   │   ├── whatsappService.js    # Meta WhatsApp API
@@ -85,14 +310,19 @@ npm run preview:landing
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Run backend API in watch mode |
-| `npm run start` | Run backend API in production mode |
-| `npm run dev:landing` | Start landing page dev server (port 5173) |
-| `npm run build:landing` | Build landing page for production |
-| `npm run preview:landing` | Preview landing page production build |
-| `npm run test` | Run integration tests |
+```bash
+npm start                 # bot (Baileys + Express)
+npm run dev               # bot with --watch
+npm run start:live-test   # bot with ENABLE_LIVE_TEST=1 inject route
+npm test                  # integration diagnostics
+npm run test:purchase     # E2E purchase path (Airtable + BACHs)
+npm run test:live-golden  # live G1/G2/G7 checks
+npm run test:all          # integration + purchase
+npm run dev:landing       # landing dev server
+npm run build:landing     # build landing
+npm run lint              # eslint src/
+```
+
 
 ## Tech Stack
 
@@ -101,7 +331,7 @@ npm run preview:landing
 - **Framework:** Express.js
 - **AI/ML:** Cerebras Cloud SDK
 - **Database:** Airtable
-- **Payments:** Bachs (formerly Paystack)
+- **Payments:** BACHs
 - **Messaging:** Meta WhatsApp Cloud API
 
 ### Landing Page
@@ -331,7 +561,7 @@ vercel --prod
 ### Phase 4: Production Polish
 
 - [ ] **Switch Bachs to live keys** (after testing in sandbox)
-- [ ] **Add more Nigerian bank codes** in `paystackService.js`
+- [ ] **Add more Nigerian bank codes** in `paymentService.js`
 - [ ] **Implement retry logic** for failed Bachs payouts
 - [ ] **Add error tracking** (Sentry/Logflare)
 - [ ] **Add analytics** (how many buyers/vendors, conversion rate)

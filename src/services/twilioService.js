@@ -356,7 +356,7 @@ async function sendVendorListInteractive(to, intent, vendorOrderPairs) {
   const sections = [{
     title: `Vendors (${vendorOrderPairs.length})`,
     options: vendorOrderPairs.map(({ vendor, reference }, i) => ({
-      id: reference,
+      id: `vendor_${reference}`,
       text: `${vendor.name}`.slice(0, 24),
       description: `₦${vendor.price?.toLocaleString()}, ${vendor.location}${vendor.verified ? ' ✅' : ''}`.slice(0, 72)
     }))

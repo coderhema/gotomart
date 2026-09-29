@@ -28,6 +28,7 @@ const { searchProductPrices, getMarketTrends, formatSearchResultsForWhatsApp } =
 // Payment Service (Bachs)
 const {
   createPaymentLink,
+  createCheckoutLink,
   verifyWebhookSignature,
   parseWebhookEvent,
   isSuccessfulPayment,
@@ -36,7 +37,7 @@ const {
 } = require('./services/paymentService');
 const { getSession, setSession, clearSession } = require('./services/sessionService');
 const { generateVendorUid, createVendor } = require('./services/vendorService');
-const { createOrder, getOrderByReference, markOrderPaid, getOrdersByPhone } = require('./services/orderService');
+const { createOrder, getOrderByReference, markOrderPaid, markOrderAwaitingPayment, getOrdersByPhone, formatOrdersForWhatsApp } = require('./services/orderService');
 const { generatePin } = require('./utils/pin');
 const { isVendorIntent, hasBusinessProfileSignal } = require('./utils/classify');
 const {
@@ -197,10 +198,14 @@ async function handleInteractiveResponse(from, interaction, session) {
   const id = interaction.itemId || interaction.buttonId;
   if (!id) return false;
 
-  // Vendor selection from list
+  // Vendor selection from list (vendor_<ref> or raw order reference id)
   if (ComponentIds.hasPrefix(id, ComponentIds.VENDOR_PREFIX)) {
     const reference = id.replace(ComponentIds.VENDOR_PREFIX, '');
     await handleVendorSelection(from, reference);
+    return true;
+  }
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) || /^(TEST|ORD|LIVE)-/i.test(id)) {
+    await handleVendorSelection(from, id);
     return true;
   }
 
@@ -421,9 +426,11 @@ async function handleNumericSelection(from, text, session) {
   try {
     const index = parseInt(text) - 1;
     
-    // Check if we have recent vendor results in session
-    if (session?.lastVendors && session.lastVendors[index]) {
-      const vendor = session.lastVendors[index];
+    // Check if we have recent vendor results in session (flattened or nested data)
+    const lastVendors = session?.lastVendors || session?.data?.lastVendors;
+    const lastIntent = session?.lastIntent || session?.data?.lastIntent;
+    if (lastVendors && lastVendors[index]) {
+      const vendor = lastVendors[index];
       // Create order for this vendor
       const reference = crypto.randomUUID();
       await createOrder({
@@ -431,8 +438,8 @@ async function handleNumericSelection(from, text, session) {
         BuyerPhone: from,
         VendorId: vendor.id,
         VendorPhone: vendor.phone,
-        Item: session.lastIntent?.item || 'product',
-        Quantity: session.lastIntent?.quantity || '',
+        Item: lastIntent?.item || 'product',
+        Quantity: lastIntent?.quantity || '',
         Price: vendor.price,
         Pin: generatePin(),
         Status: 'pending'
@@ -460,24 +467,19 @@ async function handleNumericSelection(from, text, session) {
 async function handleOrderStatus(from, session) {
   try {
     const orders = await getOrdersByPhone(from);
-    if (orders.length === 0) {
-      await sendText(from, "You don't have any orders yet. Send something like \"I need 50kg rice\" to find vendors!");
-      return;
+    await sendText(from, formatOrdersForWhatsApp(orders));
+
+    // Keep latest open order on session for follow-up payment
+    const open = orders.find(o => o.Status === 'pending' || o.Status === 'awaiting_payment');
+    if (open) {
+      await setSession(from, {
+        ...session,
+        phone: from,
+        state: 'awaiting_payment',
+        orderRef: open.Reference,
+        jid: from
+      });
     }
-    
-    const pending = orders.filter(o => o.Status === 'pending');
-    const paid = orders.filter(o => o.Status === 'paid');
-    
-    let statusMsg = `📦 *Your Orders*\n\n`;
-    if (pending.length > 0) {
-      statusMsg += `⏳ *Pending:* ${pending.length}\n`;
-    }
-    if (paid.length > 0) {
-      statusMsg += `✅ *Paid:* ${paid.length}\n\n`;
-      statusMsg += `Your PIN for pickup: ${paid[0].Pin}`;
-    }
-    
-    await sendText(from, statusMsg);
   } catch (err) {
     console.error('Error fetching orders:', err);
     await sendText(from, "Couldn't retrieve your orders right now. Try again in a moment.");
@@ -653,9 +655,34 @@ async function handleVendorSelection(from, reference) {
       { from, order, stage: 'checkout_link_generation' }
     );
 
+    if (order.id) {
+      try {
+        await markOrderAwaitingPayment(order.id);
+      } catch (e) {
+        console.warn('[ORDER] Could not set awaiting_payment:', e.message);
+      }
+    }
+
+    const session = await getSession(from);
+    await setSession(from, {
+      ...session,
+      phone: from,
+      jid: from,
+      state: 'awaiting_payment',
+      orderRef: order.Reference
+    });
+
     // Use enhanced error handling wrapper for sending confirmation
     await withEnhancedErrorHandling(
-      () => sendText(from, `Great choice. Complete your secure payment here: ${link}`),
+      () => sendText(from, `Great choice. Order *${order.Reference}* is ready.
+
+Item: ${order.Item}${order.Quantity ? ` (${order.Quantity})` : ''}
+Amount: ₦${Number(order.Price).toLocaleString()}
+
+Complete your secure payment here:
+${link}
+
+After payment you will get a handover PIN. Reply *orders* anytime to track status.`),
       { from, link, stage: 'send_confirmation' }
     );
     
@@ -823,10 +850,13 @@ async function handleFastBuy(from, intent, decision) {
       return;
     }
 
-    // Store vendors in session for numeric selection
+    // Store vendors + intent in Airtable session for numeric selection / order tracking
     const session = await getSession(from);
-    await setSession({ 
-      ...session, 
+    await setSession(from, {
+      ...session,
+      phone: from,
+      jid: from,
+      state: 'awaiting_vendor_selection',
       lastVendors: vendors,
       lastIntent: intent,
       vendorSearchTime: Date.now()

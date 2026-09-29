@@ -1,50 +1,83 @@
 import { useState } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import Logo from './Logo'
+import { WA, scrollToId } from '../lib/actions'
+
+const navLinks = [
+  { label: 'How it works', href: '/#how-it-works', hash: 'how-it-works' },
+  { label: 'For Vendors', href: '/#vendors', hash: 'vendors' },
+  { label: 'For Buyers', href: '/#buyers', hash: 'buyers' },
+  { label: 'Pricing', href: '/#cta', hash: 'cta' },
+  { label: 'About', href: '/about', path: '/about' },
+]
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  const navLinks = [
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'For Vendors', href: '#vendors' },
-    { label: 'For Buyers', href: '#buyers' },
-  ]
-
-  const scrollToSection = (e, href) => {
+  const goHomeSection = (e, hash) => {
     e.preventDefault()
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
     setIsMenuOpen(false)
+    if (location.pathname === '/') {
+      scrollToId(hash)
+      window.history.replaceState(null, '', `/#${hash}`)
+    } else {
+      navigate(`/#${hash}`)
+    }
   }
 
-  return (
-    <nav className="w-full bg-cream py-5 px-4 sm:px-6 lg:px-20 flex justify-between items-center sticky top-0 z-50">
-      <a href="#home" onClick={(e) => scrollToSection(e, '#home')} className="flex items-center gap-2">
-        <Logo className="w-9 h-9" />
-        <span className="text-2xl font-light text-gray-900">GoToMart</span>
-      </a>
+  const linkClass = ({ isActive }) =>
+    `text-sm transition-colors ${
+      isActive ? 'text-navy font-medium' : 'text-gray-text hover:text-gray-900'
+    }`
 
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-8">
-        {navLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            onClick={(e) => scrollToSection(e, link.href)}
-            className="text-sm text-gray-text hover:text-gray-900 transition-colors"
-          >
-            {link.label}
-          </a>
-        ))}
+  return (
+    <nav className="w-full bg-cream py-5 px-4 sm:px-10 lg:px-20 flex justify-between items-center sticky top-0 z-50 relative">
+      <Link
+        to="/"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center gap-2"
+      >
+        <Logo className="w-9 h-9" />
+        <span className="text-2xl font-light text-gray-900">GotoMart</span>
+      </Link>
+
+      <div className="hidden lg:flex items-center gap-8">
+        {navLinks.map((link) =>
+          link.path ? (
+            <NavLink
+              key={link.label}
+              to={link.path}
+              className={linkClass}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {link.label}
+            </NavLink>
+          ) : (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={(e) => goHomeSection(e, link.hash)}
+              className="text-sm text-gray-text hover:text-gray-900 transition-colors"
+            >
+              {link.label}
+            </a>
+          )
+        )}
       </div>
 
-      {/* Desktop CTA */}
       <div className="hidden md:flex items-center gap-3">
-        <a href="#contact" className="text-sm text-gray-900">Contact us</a>
         <a
-          href="https://wa.me/YOUR_WHATSAPP_NUMBER"
+          href={WA.contactSales}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-gray-900 hover:text-navy transition-colors"
+        >
+          Contact us
+        </a>
+        <a
+          href={WA.startChatting}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-black text-white text-sm px-4 py-3.5 rounded hover:bg-gray-800 transition-colors"
@@ -53,10 +86,12 @@ function Navigation() {
         </a>
       </div>
 
-      {/* Mobile Menu Button */}
       <button
-        className="md:hidden p-2"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        type="button"
+        className="lg:hidden p-2"
+        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={isMenuOpen}
+        onClick={() => setIsMenuOpen((v) => !v)}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           {isMenuOpen ? (
@@ -67,22 +102,40 @@ function Navigation() {
         </svg>
       </button>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-cream border-t border-light-gray md:hidden">
+        <div className="absolute top-full left-0 right-0 bg-cream border-t border-light-gray lg:hidden shadow-sm">
           <div className="flex flex-col p-4 gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => scrollToSection(e, link.href)}
-                className="text-sm text-gray-text hover:text-gray-900"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.path ? (
+                <NavLink
+                  key={link.label}
+                  to={link.path}
+                  className={linkClass}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </NavLink>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => goHomeSection(e, link.hash)}
+                  className="text-sm text-gray-text hover:text-gray-900"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
-              href="https://wa.me/YOUR_WHATSAPP_NUMBER"
+              href={WA.contactSales}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-900"
+            >
+              Contact us
+            </a>
+            <a
+              href={WA.startChatting}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-black text-white text-sm px-4 py-3 rounded text-center"

@@ -1,5 +1,38 @@
 {
   "version": 2,
-  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "index.js" }]
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "landing/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/api",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/webhook",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/test/simulate-message",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/landing/$1"
+    }
+  ]
 }

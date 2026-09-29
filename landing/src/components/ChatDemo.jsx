@@ -117,7 +117,7 @@ function ChatDemo({ className = '' }) {
   return (
     <div
       data-name="Hero Visual"
-      className={`box-border w-full max-w-[520px] min-h-[530px] shrink-0 flex flex-col gap-0 p-8 justify-start items-start bg-cream-dark rounded relative overflow-hidden ${className}`}
+      className={`box-border w-full max-w-[320px] sm:max-w-[400px] md:max-w-[460px] lg:max-w-[520px] min-h-[380px] sm:min-h-[460px] md:min-h-[500px] lg:min-h-[530px] shrink-0 flex flex-col gap-0 p-4 sm:p-6 lg:p-8 justify-start items-start bg-cream-dark rounded relative overflow-hidden ${className}`}
     >
       {/* Chat Header */}
       <div className="box-border w-fit h-fit shrink-0 flex flex-row gap-3 justify-start items-center relative z-0">

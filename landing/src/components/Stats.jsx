@@ -72,19 +72,19 @@ function Stats() {
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-cream px-4 sm:px-10 lg:px-20 py-16 lg:py-20"
+      className="w-full bg-cream px-4 sm:px-10 lg:px-20 py-12 sm:py-16 lg:py-20"
     >
-      <div className="max-w-7xl mx-auto flex flex-col items-center text-center gap-10">
-        <h2 className="text-2xl lg:text-3xl font-light text-gray-900 max-w-2xl">
+      <div className="max-w-7xl mx-auto flex flex-col items-center text-center gap-8 sm:gap-10">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-light text-gray-900 max-w-2xl">
           Join thousands of vendors growing their business
         </h2>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 justify-items-center">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 justify-items-center">
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col gap-1 items-center">
-              <div className="text-4xl lg:text-5xl font-light text-navy tabular-nums">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-light text-navy tabular-nums">
                 <CountUp end={stat.end} suffix={stat.suffix} active={inView} />
               </div>
-              <div className="text-sm text-gray-text">{stat.label}</div>
+              <div className="text-xs sm:text-sm text-gray-text">{stat.label}</div>
             </div>
           ))}
         </div>

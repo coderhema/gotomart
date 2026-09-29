@@ -26,13 +26,13 @@ const steps = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="w-full bg-cream-dark px-4 sm:px-10 lg:px-20 py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto flex flex-col gap-12">
-        <h2 className="text-3xl lg:text-4xl font-light text-gray-900">
+    <section id="how-it-works" className="w-full bg-cream-dark px-4 sm:px-10 lg:px-20 py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto flex flex-col gap-8 sm:gap-12">
+        <h2 className="text-[28px] sm:text-3xl lg:text-4xl font-light text-gray-900">
           Connect in three simple steps
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {steps.map((step) => (
             <div key={step.number} className="flex flex-col gap-4 items-start">
               <span className="text-sm font-medium text-navy tracking-wide">{step.number}</span>

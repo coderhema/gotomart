@@ -76,3 +76,4 @@ baileys_auth/
 # Local run logs
 gotomart-live.log
 /tmp/gotomart-*.log
+.vercel

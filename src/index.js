@@ -61,6 +61,27 @@ const app = express();
 app.use(express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 
 // --- Health check ---
+
+// Live test inject (only when ENABLE_LIVE_TEST=1) - simulates inbound WhatsApp text
+if (process.env.ENABLE_LIVE_TEST === '1') {
+  app.post('/test/simulate-message', async (req, res) => {
+    try {
+      const from = req.body?.from || req.body?.phone;
+      const text = req.body?.text || req.body?.message || '';
+      if (!from || !text) {
+        return res.status(400).json({ ok: false, error: 'from and text required' });
+      }
+      console.log('[LIVE_TEST] simulate-message', from, text);
+      await handleTextMessage(from, { text, from }, null);
+      res.json({ ok: true, from, text });
+    } catch (err) {
+      console.error('[LIVE_TEST] simulate-message error:', err.message);
+      res.status(500).json({ ok: false, error: err.message });
+    }
+  });
+  console.log('[LIVE_TEST] POST /test/simulate-message enabled');
+}
+
 app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'GoToMart', timestamp: new Date().toISOString() });
 });
@@ -102,6 +123,10 @@ app.post('/webhook', (req, res) => {
     if (isSuccessfulPayment(event)) {
       processSuccessfulPayment(event).catch(err => {
         console.error('[WEBHOOK] Payment processing error:', err.message);
+      });
+    } else if (isSuccessfulPayment({ type: req.body?.event || req.body?.data?.status, data: req.body?.data, raw: req.body, reference: req.body?.data?.reference || req.body?.data?.metadata?.reference })) {
+      handleBachsEvent(req.body).catch(err => {
+        console.error('[WEBHOOK] handleBachsEvent error:', err.message);
       });
     }
   } catch (err) {
@@ -1098,6 +1123,21 @@ async function handlePaystackEvent(event) {
 }
 
 // Init Baileys with message handler
+
+async function processSuccessfulPayment(event) {
+  // Normalize then reuse Bachs handler shape
+  const body = event?.raw || {
+    event: event?.type || 'checkout.completed',
+    data: {
+      reference: event?.reference,
+      status: 'success',
+      metadata: { reference: event?.reference },
+      ...(event?.data || {})
+    }
+  };
+  return handleBachsEvent(body);
+}
+
 async function initWhatsApp() {
   await initBaileySocket(async (msg) => {
     console.log('[BAILEYS] 📨 Received:', msg.text.substring(0, 30) + '...', '| from:', msg.from);

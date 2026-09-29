@@ -291,6 +291,25 @@ ngrok http 3000
 # register that BASE_URL/webhook in BACHs
 ```
 
+
+## Live automated G1 / G2 / G7
+
+For CI-style live path checks without typing on a phone UI:
+
+```bash
+ENABLE_LIVE_TEST=1 npm start
+# other terminal:
+LIVE_TEST_TO=2348XXXXXXXXX node tests/test_live_g1_g2_g7.js
+```
+
+| Step | What it proves |
+|------|----------------|
+| G1 | JEV GREETING + `handleTextMessage('hi')` + Baileys outbound |
+| G2 | JEV HELP + `handleTextMessage('help')` + Baileys outbound |
+| G7 | Signed BACHs webhook -> Airtable `paid` + PIN notify path |
+
+Turn off `ENABLE_LIVE_TEST` after verification on shared hosts.
+
 ## Step 5: Automated check (no phone UI)
 
 Does not replace real chat, but validates Airtable + BACHs:

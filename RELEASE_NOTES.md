@@ -1,5 +1,30 @@
 # Release Notes
 
+## v0.1.2 - Live G1/G2/G7 verification and payment webhook fixes
+
+**Date:** 2026-09-29
+
+### Summary
+
+Fixes BACHs webhook helper exports, adds paid-settlement processing hook, and documents live golden-path tests for greeting, help, and payment confirmation.
+
+### Technical changes
+
+- **paymentService.js** - exports `parseWebhookEvent`, `isSuccessfulPayment`, `createPaymentLink`, `createPayout`, `WebhookEvents`
+- **index.js** - `processSuccessfulPayment` delegates to `handleBachsEvent`; optional `ENABLE_LIVE_TEST` inject route
+- **tests/test_live_g1_g2_g7.js** - live G1/G2/G7 checker
+- **Docs** - deploy + WhatsApp testing updated for live verification
+
+### Verify
+
+```bash
+ENABLE_LIVE_TEST=1 npm start
+node tests/test_live_g1_g2_g7.js
+node tests/test_purchase_flow.js
+```
+
+
+
 ## v0.1.1 - Purchase path, Airtable/BACHs fixes, WhatsApp deploy docs
 
 **Date:** 2026-09-29  

@@ -209,6 +209,43 @@ Keep the **bot** on the always-on host; landing can be static.
 
 Step-by-step buyer chat script, Airtable checks, webhook notes, and demo flow: **[TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md)**.
 
+
+## 4.7 Live golden-path verification (G1 / G2 / G7)
+
+After the bot process is up, verify greeting, help, and paid-webhook settlement.
+
+### Enable inject route (non-production by default)
+
+```bash
+ENABLE_LIVE_TEST=1 npm start
+```
+
+This exposes `POST /test/simulate-message` which runs the same `handleTextMessage` path Baileys uses, then sends replies over WhatsApp via Baileys.
+
+Do **not** leave `ENABLE_LIVE_TEST=1` on a public production host without auth.
+
+### Run live G1 / G2 / G7
+
+```bash
+# optional: real phone/JID that should receive outbound WhatsApp replies
+export LIVE_TEST_TO=2348XXXXXXXXX
+node tests/test_live_g1_g2_g7.js
+```
+
+Expected:
+
+- G1: intent GREETING; simulate `hi` returns ok
+- G2: intent HELP; simulate `help` returns ok
+- G7: creates Airtable order, accepts signed `POST /webhook` and `/paystack/webhook`, order `Status=paid` with PIN
+
+Also keep:
+
+```bash
+node tests/test_purchase_flow.js   # G3-G6 purchase path
+```
+
+Full phone checklist: [TESTING_WHATSAPP.md](./TESTING_WHATSAPP.md)
+
 ## 5. Post-deploy checklist
 
 - [ ] `GET /` returns healthy
@@ -218,6 +255,8 @@ Step-by-step buyer chat script, Airtable checks, webhook notes, and demo flow: *
 - [ ] Checkout URL opens BACHs sandbox/prod checkout
 - [ ] Test payment fires webhook; order becomes `paid`
 - [ ] `node tests/test_purchase_flow.js` passes against prod/sandbox keys carefully (creates real Airtable rows)
+- [ ] Live G1/G2/G7: `ENABLE_LIVE_TEST=1` once, then `node tests/test_live_g1_g2_g7.js` (disable inject after)
+- [ ] Paid webhook flips Orders `Status` to `paid` and PIN notify path runs
 
 ---
 

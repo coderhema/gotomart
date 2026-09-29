@@ -180,4 +180,68 @@ function verifyWebhookSignature(rawBody, signatureHeader) {
   return hash === signatureHeader;
 }
 
-module.exports = { createCheckoutLink, verifyWebhookSignature, payoutToVendor, parseBankDetails };
+
+
+/**
+ * Normalize BACHs (or legacy) webhook payloads into a common shape.
+ */
+function parseWebhookEvent(body = {}) {
+  const data = body.data || body.payload || {};
+  const type = body.event || body.type || data.status || data.event || '';
+  const reference =
+    data.reference ||
+    data.metadata?.reference ||
+    body.reference ||
+    body.metadata?.reference ||
+    null;
+  return {
+    type,
+    reference,
+    data,
+    raw: body
+  };
+}
+
+function isSuccessfulPayment(event = {}) {
+  const type = String(event.type || event.event || event.raw?.event || '').toLowerCase();
+  const status = String(event.data?.status || event.raw?.data?.status || '').toLowerCase();
+  return (
+    type.includes('success') ||
+    type === 'checkout.completed' ||
+    type.includes('checkout.completed') ||
+    status === 'success' ||
+    status === 'completed' ||
+    status === 'paid'
+  );
+}
+
+/** Alias used by older call sites */
+async function createPaymentLink(buyerPhone, order) {
+  // Support both (phone, order) and legacy single-arg shapes
+  if (order && typeof order === 'object') {
+    return createCheckoutLink(buyerPhone, order);
+  }
+  return createCheckoutLink(buyerPhone, order || {});
+}
+
+const WebhookEvents = {
+  CHECKOUT_COMPLETED: 'checkout.completed',
+  PAYMENT_SUCCESS: 'payment.success'
+};
+
+async function createPayout(amount, vendorBankDetails, reference) {
+  return payoutToVendor(amount, vendorBankDetails, reference);
+}
+
+module.exports = {
+  createCheckoutLink,
+  createPaymentLink,
+  verifyWebhookSignature,
+  payoutToVendor,
+  createPayout,
+  parseBankDetails,
+  parseWebhookEvent,
+  isSuccessfulPayment,
+  WebhookEvents
+};
+

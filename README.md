@@ -1,6 +1,8 @@
 # GoToMart
 
-A WhatsApp-native AI marketplace connecting buyers with local vendors.
+<img width="1600" height="898" alt="gtm-hero" src="https://github.com/user-attachments/assets/4443f2db-b7a2-4d76-8a40-a90811964e8b" />
+
+A WhatsApp-native Agent marketplace connecting buyers with local vendors.
 
 ## System architecture
 

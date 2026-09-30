@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "landing/package.json",
+      "src": "landing",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist"
@@ -31,8 +31,11 @@
       "dest": "src/index.js"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/landing/$1"
+      "dest": "/landing/index.html"
     }
   ]
 }

@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
-    outDir: '../dist/landing',
+    outDir: 'dist',
     emptyOutDir: true,
   },
   server: {

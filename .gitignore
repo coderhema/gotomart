@@ -77,3 +77,4 @@ baileys_auth/
 gotomart-live.log
 /tmp/gotomart-*.log
 .vercel
+.env*
